@@ -1,14 +1,20 @@
 <template>
   <div class="space-y-6">
     <div>
-      <h1 class="text-2xl font-bold text-foreground">Dashboard</h1>
-      <p class="text-muted-foreground text-sm mt-1">Welcome back, {{ authStore.user?.name }}</p>
+      <h1 class="text-2xl font-bold text-foreground">
+        Dashboard
+      </h1>
+      <p class="text-muted-foreground text-sm mt-1">
+        Welcome back, {{ authStore.user?.name }}
+      </p>
     </div>
 
     <!-- Today's Attendance Status -->
     <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-foreground">Today's Attendance</h2>
+        <h2 class="text-lg font-semibold text-foreground">
+          Today's Attendance
+        </h2>
         <span class="text-2xl font-mono text-foreground">{{ currentTime }}</span>
       </div>
 
@@ -42,23 +48,41 @@
 
     <!-- Weekly Summary -->
     <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-foreground mb-4">This Week</h2>
+      <h2 class="text-lg font-semibold text-foreground mb-4">
+        This Week
+      </h2>
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-accent rounded-md p-4 text-center">
-          <p class="text-2xl font-bold text-foreground">{{ weeklyDaysWorked }}</p>
-          <p class="text-xs text-muted-foreground mt-1">Days Worked</p>
+          <p class="text-2xl font-bold text-foreground">
+            {{ weeklyDaysWorked }}
+          </p>
+          <p class="text-xs text-muted-foreground mt-1">
+            Days Worked
+          </p>
         </div>
         <div class="bg-accent rounded-md p-4 text-center">
-          <p class="text-2xl font-bold text-foreground">{{ weeklyTotalHours }}</p>
-          <p class="text-xs text-muted-foreground mt-1">Total Hours</p>
+          <p class="text-2xl font-bold text-foreground">
+            {{ weeklyTotalHours }}
+          </p>
+          <p class="text-xs text-muted-foreground mt-1">
+            Total Hours
+          </p>
         </div>
         <div class="bg-accent rounded-md p-4 text-center">
-          <p class="text-2xl font-bold text-destructive">{{ weeklyLate }}</p>
-          <p class="text-xs text-muted-foreground mt-1">Late</p>
+          <p class="text-2xl font-bold text-destructive">
+            {{ weeklyLate }}
+          </p>
+          <p class="text-xs text-muted-foreground mt-1">
+            Late
+          </p>
         </div>
         <div class="bg-accent rounded-md p-4 text-center">
-          <p class="text-2xl font-bold text-foreground">{{ weeklyOnTime }}</p>
-          <p class="text-xs text-muted-foreground mt-1">On Time</p>
+          <p class="text-2xl font-bold text-foreground">
+            {{ weeklyOnTime }}
+          </p>
+          <p class="text-xs text-muted-foreground mt-1">
+            On Time
+          </p>
         </div>
       </div>
     </div>

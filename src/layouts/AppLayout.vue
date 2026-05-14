@@ -11,13 +11,19 @@
     >
       <!-- Logo / App Name -->
       <div class="flex items-center h-16 px-4 border-b border-border">
-        <span v-if="isSidebarOpen" class="text-lg font-bold text-foreground">HRIS</span>
+        <span
+          v-if="isSidebarOpen"
+          class="text-lg font-bold text-foreground"
+        >HRIS</span>
         <button
           class="p-2 rounded-md hover:bg-accent max-md:hidden"
-          @click="toggleSidebar"
           aria-label="Toggle sidebar"
+          @click="toggleSidebar"
         >
-          <Menu :size="20" class="text-muted-foreground" />
+          <Menu
+            :size="20"
+            class="text-muted-foreground"
+          />
         </button>
       </div>
 
@@ -31,7 +37,10 @@
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             active-class="bg-accent text-foreground"
           >
-            <component :is="item.icon" :size="20" />
+            <component
+              :is="item.icon"
+              :size="20"
+            />
             <span v-if="isSidebarOpen">{{ item.label }}</span>
           </RouterLink>
         </template>
@@ -43,7 +52,10 @@
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             active-class="bg-accent text-foreground"
           >
-            <component :is="item.icon" :size="20" />
+            <component
+              :is="item.icon"
+              :size="20"
+            />
             <span v-if="isSidebarOpen">{{ item.label }}</span>
           </RouterLink>
         </template>
@@ -74,10 +86,13 @@
       <header class="flex items-center justify-between h-16 px-6 bg-card border-b border-border">
         <button
           class="p-2 rounded-md hover:bg-accent md:hidden"
-          @click="toggleSidebar"
           aria-label="Open menu"
+          @click="toggleSidebar"
         >
-          <Menu :size="20" class="text-muted-foreground" />
+          <Menu
+            :size="20"
+            class="text-muted-foreground"
+          />
         </button>
         <div class="flex items-center gap-3 ml-auto">
           <div class="flex items-center gap-2">

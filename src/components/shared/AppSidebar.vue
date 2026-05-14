@@ -109,14 +109,26 @@ function isActive(item: NavItem): boolean {
         :aria-label="isOpen ? 'Collapse sidebar' : 'Expand sidebar'"
         @click="emit('toggle')"
       >
-        <ChevronLeft v-if="isOpen" class="size-4" />
-        <ChevronRight v-else class="size-4" />
+        <ChevronLeft
+          v-if="isOpen"
+          class="size-4"
+        />
+        <ChevronRight
+          v-else
+          class="size-4"
+        />
       </Button>
     </div>
 
     <!-- Navigation list -->
-    <nav class="flex flex-col gap-1 px-2 pb-4" aria-label="Sidebar navigation">
-      <template v-for="item in navItems" :key="item.route">
+    <nav
+      class="flex flex-col gap-1 px-2 pb-4"
+      aria-label="Sidebar navigation"
+    >
+      <template
+        v-for="item in navItems"
+        :key="item.route"
+      >
         <div
           v-if="isActive(item)"
           class="bg-primary/10 border-r-2 border-primary h-10 rounded-l-md absolute left-0"
@@ -136,8 +148,15 @@ function isActive(item: NavItem): boolean {
           :aria-current="isActive(item) ? 'page' : undefined"
           @click.prevent="router.push(item.route)"
         >
-          <component :is="iconMap[item.icon]" class="size-5 shrink-0" aria-hidden="true" />
-          <span v-if="isOpen" class="truncate">{{ item.name }}</span>
+          <component
+            :is="iconMap[item.icon]"
+            class="size-5 shrink-0"
+            aria-hidden="true"
+          />
+          <span
+            v-if="isOpen"
+            class="truncate"
+          >{{ item.name }}</span>
         </a>
       </template>
     </nav>

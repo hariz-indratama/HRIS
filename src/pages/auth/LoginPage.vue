@@ -2,13 +2,23 @@
   <div class="w-full max-w-sm">
     <div class="bg-card rounded-lg border border-border p-8 shadow-sm">
       <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold text-foreground">HRIS</h1>
-        <p class="text-sm text-muted-foreground mt-1">Sign in to your account</p>
+        <h1 class="text-2xl font-bold text-foreground">
+          HRIS
+        </h1>
+        <p class="text-sm text-muted-foreground mt-1">
+          Sign in to your account
+        </p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
+      <form
+        class="space-y-4"
+        @submit.prevent="handleLogin"
+      >
         <div class="space-y-2">
-          <label for="email" class="text-sm font-medium text-foreground">Email</label>
+          <label
+            for="email"
+            class="text-sm font-medium text-foreground"
+          >Email</label>
           <input
             id="email"
             v-model="form.email"
@@ -17,12 +27,20 @@
             class="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             :class="{ 'border-destructive': errors.email }"
             autocomplete="email"
-          />
-          <p v-if="errors.email" class="text-xs text-destructive">{{ errors.email }}</p>
+          >
+          <p
+            v-if="errors.email"
+            class="text-xs text-destructive"
+          >
+            {{ errors.email }}
+          </p>
         </div>
 
         <div class="space-y-2">
-          <label for="password" class="text-sm font-medium text-foreground">Password</label>
+          <label
+            for="password"
+            class="text-sm font-medium text-foreground"
+          >Password</label>
           <input
             id="password"
             v-model="form.password"
@@ -31,11 +49,21 @@
             class="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             :class="{ 'border-destructive': errors.password }"
             autocomplete="current-password"
-          />
-          <p v-if="errors.password" class="text-xs text-destructive">{{ errors.password }}</p>
+          >
+          <p
+            v-if="errors.password"
+            class="text-xs text-destructive"
+          >
+            {{ errors.password }}
+          </p>
         </div>
 
-        <p v-if="submitError" class="text-sm text-destructive text-center">{{ submitError }}</p>
+        <p
+          v-if="submitError"
+          class="text-sm text-destructive text-center"
+        >
+          {{ submitError }}
+        </p>
 
         <button
           type="submit"

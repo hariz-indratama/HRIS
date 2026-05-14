@@ -77,7 +77,10 @@ function handleLogout(): void {
       <!-- User avatar + name + role -->
       <div class="flex items-center gap-3">
         <!-- Avatar -->
-        <Avatar size="sm" class="hidden sm:flex">
+        <Avatar
+          size="sm"
+          class="hidden sm:flex"
+        >
           <AvatarFallback class="bg-muted text-muted-foreground text-xs font-medium">
             {{ userInitials }}
           </AvatarFallback>
@@ -88,14 +91,20 @@ function handleLogout(): void {
           <span class="text-foreground text-sm font-medium leading-none">
             {{ authStore.user?.name ?? 'Unknown' }}
           </span>
-          <Badge :variant="roleVariant" class="mt-0.5 px-1.5 py-0 text-[10px]">
+          <Badge
+            :variant="roleVariant"
+            class="mt-0.5 px-1.5 py-0 text-[10px]"
+          >
             {{ roleLabel }}
           </Badge>
         </div>
       </div>
 
       <!-- Divider -->
-      <div class="bg-border hidden h-8 w-px md:block" aria-hidden="true" />
+      <div
+        class="bg-border hidden h-8 w-px md:block"
+        aria-hidden="true"
+      />
 
       <!-- User / Logout buttons -->
       <div class="hidden items-center gap-1 md:flex">
