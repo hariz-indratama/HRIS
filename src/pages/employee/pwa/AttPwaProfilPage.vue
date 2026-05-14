@@ -8,7 +8,9 @@
  * @packageDocumentation
  */
 import { useRouter } from 'vue-router'
+import { computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useLeaveStore } from '@/stores/leaveStore'
 import {
   Settings,
   Bell,
@@ -25,25 +27,36 @@ import {
 
 const router = useRouter()
 const authStore = useAuthStore()
+const leaveStore = useLeaveStore()
 
-const employee = {
-  name: 'Ahmad Rizki Pratama',
-  empId: '#EMP-2024-0042',
-  department: 'Engineering',
-  role: 'Staff',
-  email: 'ahmad.rizki@company.com',
-  phone: '+62 812-3456-7890',
-  joinDate: '12 Jan 2024',
-  division: 'Core Engineering',
-  shift: 'Regular — 08:00 – 17:00',
-  location: 'Jakarta HQ',
-}
+// ── Profile computed ────────────────────────────────────────────
+const profile = computed(() => {
+  const u = authStore.user
+  if (!u) return null
+  return {
+    name: u.name,
+    email: u.email,
+    department: u.department ?? '-',
+    position: u.position ?? '-',
+    phone: u.phone ?? '-',
+    avatarUrl: u.avatarUrl ?? 'https://i.pravatar.cc/96?img=11',
+  }
+})
 
-const quickStats = [
-  { label: 'Cuti Tersisa', value: '12', unit: 'hari' },
-  { label: 'Izin Bulan Ini', value: '2', unit: '' },
-  { label: 'Total Hadir', value: '95', unit: '%' },
-]
+// ── Quick stats from leaveStore ────────────────────────────────
+const quickStats = computed(() => [
+  { label: 'Cuti Tersisa', value: leaveStore.vacationBalance, unit: 'hari' },
+  { label: 'Izin Bulan Ini', value: leaveStore.pendingCount, unit: '' },
+  { label: 'Total Hadir', value: '—', unit: '%' },
+])
+
+// ── Fetch on mount ─────────────────────────────────────────────
+onMounted(async () => {
+  if (authStore.user) {
+    await authStore.fetchUser()
+  }
+  await leaveStore.fetchBalance()
+})
 
 const menuItems = [
   { icon: Settings, label: 'Pengaturan Akun' },
@@ -69,25 +82,25 @@ function handleLogout(): void {
       <div class="mb-3 flex justify-center">
         <div class="relative">
           <img
-            :alt="employee.name"
+            :alt="profile?.name"
             class="w-20 h-20 rounded-full object-cover border-4 border-stitch-primary-container"
-            src="https://i.pravatar.cc/96?img=11"
+            :src="profile?.avatarUrl ?? 'https://i.pravatar.cc/96?img=11'"
           />
           <div
             class="absolute -bottom-1 -right-1 h-6 w-6 bg-stitch-success rounded-full border-2 border-white"
           />
         </div>
       </div>
-      <h2 class="text-lg font-bold text-stitch-on-surface">{{ employee.name }}</h2>
+      <h2 class="text-lg font-bold text-stitch-on-surface">{{ profile?.name }}</h2>
       <div class="flex items-center justify-center gap-2 mt-1">
         <span class="px-2.5 py-0.5 rounded-full bg-stitch-primary-container text-stitch-on-primary-container text-xs font-medium">
-          {{ employee.empId }}
+          #EMP-{{ authStore.user?.id ?? '—' }}
         </span>
         <span class="px-2.5 py-0.5 rounded-full bg-stitch-surface-container text-stitch-on-surface-variant text-xs font-medium border border-stitch-outline-variant">
-          {{ employee.department }}
+          {{ profile?.department }}
         </span>
         <span class="px-2.5 py-0.5 rounded-full bg-stitch-surface-container text-stitch-secondary text-xs font-medium border border-stitch-outline-variant">
-          {{ employee.role }}
+          {{ authStore.user?.role ?? '—' }}
         </span>
       </div>
     </section>
@@ -102,21 +115,21 @@ function handleLogout(): void {
             <Mail class="w-4 h-4 text-stitch-outline flex-shrink-0" />
             <div class="flex-1 min-w-0">
               <p class="text-[10px] text-stitch-outline mb-0.5">Email</p>
-              <p class="text-sm text-stitch-on-surface truncate">{{ employee.email }}</p>
+              <p class="text-sm text-stitch-on-surface truncate">{{ profile?.email }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <Phone class="w-4 h-4 text-stitch-outline flex-shrink-0" />
             <div class="flex-1">
               <p class="text-[10px] text-stitch-outline mb-0.5">Telepon</p>
-              <p class="text-sm text-stitch-on-surface">{{ employee.phone }}</p>
+              <p class="text-sm text-stitch-on-surface">{{ profile?.phone }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <Calendar class="w-4 h-4 text-stitch-outline flex-shrink-0" />
             <div class="flex-1">
               <p class="text-[10px] text-stitch-outline mb-0.5">Tanggal Bergabung</p>
-              <p class="text-sm text-stitch-on-surface">{{ employee.joinDate }}</p>
+              <p class="text-sm text-stitch-on-surface">{{ authStore.user?.createdAt ? new Date(authStore.user.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '—' }}</p>
             </div>
           </div>
         </div>
@@ -129,21 +142,21 @@ function handleLogout(): void {
             <Building2 class="w-4 h-4 text-stitch-outline flex-shrink-0" />
             <div class="flex-1">
               <p class="text-[10px] text-stitch-outline mb-0.5">Divisi</p>
-              <p class="text-sm text-stitch-on-surface">{{ employee.division }}</p>
+              <p class="text-sm text-stitch-on-surface">{{ profile?.position }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <Clock class="w-4 h-4 text-stitch-outline flex-shrink-0" />
             <div class="flex-1">
               <p class="text-[10px] text-stitch-outline mb-0.5">Jadwal Shift</p>
-              <p class="text-sm text-stitch-on-surface">{{ employee.shift }}</p>
+              <p class="text-sm text-stitch-on-surface">Regular — 08:00 – 17:00</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <MapPin class="w-4 h-4 text-stitch-outline flex-shrink-0" />
             <div class="flex-1">
               <p class="text-[10px] text-stitch-outline mb-0.5">Lokasi Kantor</p>
-              <p class="text-sm text-stitch-on-surface">{{ employee.location }}</p>
+              <p class="text-sm text-stitch-on-surface">{{ profile?.department ?? '—' }}</p>
             </div>
           </div>
         </div>

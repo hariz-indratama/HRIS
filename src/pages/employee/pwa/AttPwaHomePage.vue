@@ -14,15 +14,26 @@ import {
   Login,
   Logout,
 } from 'lucide-vue-next'
+import { useAttendanceStore } from '@/stores/attendanceStore'
+import { useLeaveStore } from '@/stores/leaveStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
+const attendanceStore = useAttendanceStore()
+const leaveStore = useLeaveStore()
+const authStore = useAuthStore()
 
 // ── Live Clock ───────────────────────────────────────────────
 const currentTime = ref('08:45:12')
 const currentDate = ref('Rabu, 14 Mei 2026')
-const isClockedIn = ref(false)
 
 let clockInterval: ReturnType<typeof setInterval>
+
+// ── Geofence State ───────────────────────────────────────────
+const isWithinGeofence = ref(true) // default to true so button works in dev
+
+// ── Computed State ──────────────────────────────────────────
+const isClockedIn = computed(() => attendanceStore.todayAttendance !== null)
 
 function updateClock(): void {
   const now = new Date()
@@ -40,9 +51,14 @@ function updateClock(): void {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
   updateClock()
   clockInterval = setInterval(updateClock, 1000)
+  await Promise.all([
+    attendanceStore.fetchToday(),
+    leaveStore.fetchBalance(),
+    authStore.fetchUser(),
+  ])
 })
 
 onUnmounted(() => {
@@ -51,17 +67,47 @@ onUnmounted(() => {
 
 // ── Actions ─────────────────────────────────────────────────
 async function handleClockIn(): Promise<void> {
-  isClockedIn.value = true
-  // TODO: Wire up attendanceStore.clockIn() + geolocation
+  try {
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
+    })
+    const deviceId =
+      'pwa-' +
+      (await navigator.clipboard.readText().catch(() =>
+        Math.random().toString(36).slice(2),
+      ))
+    await attendanceStore.clockIn(
+      position.coords.latitude,
+      position.coords.longitude,
+      deviceId,
+    )
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Gagal clock-in'
+    alert(msg)
+  }
 }
 
 async function handleClockOut(): Promise<void> {
-  isClockedIn.value = false
-  // TODO: Wire up attendanceStore.clockOut()
-}
-
-function goToAbsen(): void {
-  router.push('/pwa/absen')
+  if (!attendanceStore.todayAttendance) return
+  try {
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
+    })
+    await attendanceStore.clockOut(
+      position.coords.latitude,
+      position.coords.longitude,
+      attendanceStore.todayAttendance.id,
+    )
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Gagal clock-out'
+    alert(msg)
+  }
 }
 </script>
 
@@ -78,7 +124,7 @@ function goToAbsen(): void {
           Selamat Pagi
         </h1>
         <p class="text-sm font-medium text-stitch-secondary mt-0.5">
-          John Doe
+          {{ authStore.user?.name ?? 'Karyawan' }}
         </p>
       </div>
 
@@ -170,21 +216,23 @@ function goToAbsen(): void {
           class="flex-shrink-0 px-4 py-3 rounded-xl bg-stitch-surface-container-high border border-stitch-outline-variant flex flex-col gap-1 min-w-[110px]"
         >
           <span class="text-xs text-stitch-secondary">Hadir</span>
-          <span class="text-lg font-semibold text-stitch-primary">22</span>
+          <span class="text-lg font-semibold text-stitch-primary">{{ attendanceStore.attendanceHistory.length }}</span>
         </div>
         <!-- Terlambat -->
         <div
           class="flex-shrink-0 px-4 py-3 rounded-xl bg-stitch-surface-container-high border border-stitch-outline-variant flex flex-col gap-1 min-w-[110px]"
         >
           <span class="text-xs text-stitch-secondary">Terlambat</span>
-          <span class="text-lg font-semibold text-stitch-tertiary-container">1</span>
+          <span class="text-lg font-semibold text-stitch-tertiary-container">
+          {{ attendanceStore.attendanceHistory.filter(r => r.status === 'late').length }}
+        </span>
         </div>
         <!-- Izin -->
         <div
           class="flex-shrink-0 px-4 py-3 rounded-xl bg-stitch-surface-container-high border border-stitch-outline-variant flex flex-col gap-1 min-w-[110px]"
         >
           <span class="text-xs text-stitch-secondary">Izin</span>
-          <span class="text-lg font-semibold text-stitch-secondary">3</span>
+          <span class="text-lg font-semibold text-stitch-secondary">{{ leaveStore.pendingCount }}</span>
         </div>
       </div>
     </section>

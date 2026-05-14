@@ -29,6 +29,7 @@ export const useAttendanceStore = defineStore('attendance', () => {
     per_page?: number
     month?: number
     year?: number
+    status?: 'on_time' | 'late' | 'absent'
   }): Promise<void> {
     isLoading.value = true
     error.value = null

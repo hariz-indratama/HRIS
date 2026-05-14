@@ -51,6 +51,7 @@ export const attendanceApi = {
     per_page?: number
     month?: number
     year?: number
+    status?: 'on_time' | 'late' | 'absent'
   }): Promise<AttendanceListResponse> {
     const response = await apiClient.get<AttendanceListResponse>('/employee/attendance/history', { params })
     return response.data

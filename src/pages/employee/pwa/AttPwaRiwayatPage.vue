@@ -7,8 +7,10 @@
  *
  * @packageDocumentation
  */
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { CalendarDays, Clock, LogOut, Info } from 'lucide-vue-next'
+import { useAttendanceStore } from '@/stores/attendanceStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const activeFilter = ref('semua')
 
@@ -20,47 +22,75 @@ const filters = [
   { key: 'wfh', label: 'WFH' },
 ]
 
-const attendanceRecords = [
-  {
-    date: 'Senin, 12 Mei',
-    clockIn: '08:45',
-    clockOut: '17:05',
-    status: 'hadir',
-    statusLabel: 'Hadir',
-    statusClass: 'bg-green-50 text-green-700 border-green-200',
-    dotClass: 'bg-stitch-primary',
-  },
-  {
-    date: 'Jumat, 9 Mei',
-    clockIn: '09:15',
-    clockOut: '17:00',
-    status: 'terlambat',
-    statusLabel: 'Terlambat',
-    statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
-    dotClass: 'bg-stitch-tertiary-container',
-  },
-  {
-    date: 'Kamis, 8 Mei',
-    clockIn: null,
-    clockOut: null,
-    status: 'izin',
-    statusLabel: 'Izin',
-    statusClass: 'bg-stitch-secondary-container text-stitch-primary border-stitch-outline-variant',
-    dotClass: 'bg-stitch-secondary',
-    note: 'Keperluan Keluarga',
-  },
-  {
-    date: 'Rabu, 7 Mei',
-    clockIn: '08:30',
-    clockOut: '17:10',
-    status: 'wfh',
-    statusLabel: 'WFH',
-    statusClass: 'bg-stitch-surface-container text-stitch-on-surface-variant border-stitch-outline-variant',
-    dotClass: 'bg-stitch-surface-variant',
-  },
-]
+const attendanceStore = useAttendanceStore()
+const authStore = useAuthStore()
 
-const hasRecords = true
+const statusClassMap: Record<string, string> = {
+  on_time: 'bg-green-50 text-green-700 border-green-200',
+  late: 'bg-amber-50 text-amber-700 border-amber-200',
+  absent: 'bg-red-50 text-stitch-error border-red-200',
+  pending: 'bg-amber-50 text-amber-600 border-amber-200',
+  approved: 'bg-green-50 text-green-700 border-green-200',
+  rejected: 'bg-red-50 text-stitch-error border-red-200',
+}
+
+const dotClassMap: Record<string, string> = {
+  on_time: 'bg-stitch-primary',
+  late: 'bg-stitch-tertiary-container',
+  absent: 'bg-stitch-error',
+  pending: 'bg-amber-400',
+  approved: 'bg-stitch-success',
+  rejected: 'bg-stitch-error',
+}
+
+const attendanceRecords = computed(() =>
+  attendanceStore.attendanceHistory.map((record) => {
+    const date = new Date(record.date)
+    const dateLabel = date.toLocaleDateString('id-ID', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    })
+    return {
+      date: dateLabel,
+      clockIn: record.clockIn,
+      clockOut: record.clockOut,
+      status: record.status,
+      statusLabel: {
+        on_time: 'Hadir',
+        late: 'Terlambat',
+        absent: 'Tidak Hadir',
+      }[record.status] ?? record.status,
+      statusClass: statusClassMap[record.status] ?? 'bg-stitch-surface-container',
+      dotClass: dotClassMap[record.status] ?? 'bg-stitch-outline',
+      note: record.notes,
+    }
+  }),
+)
+
+const hasRecords = computed(() => attendanceStore.attendanceHistory.length > 0)
+
+async function applyFilter(filter: string): Promise<void> {
+  activeFilter.value = filter
+  const statusMap: Record<string, string | undefined> = {
+    semua: undefined,
+    hadir: 'on_time',
+    terlambat: 'late',
+    izin: undefined, // pending/izin statuses are not yet in attendanceHistory
+    wfh: undefined,
+  }
+  await attendanceStore.fetchHistory(
+    statusMap[filter] ? { status: statusMap[filter] as 'on_time' | 'late' | 'absent' } : {},
+  )
+}
+
+function handleFilterClick(key: string): void {
+  applyFilter(key)
+}
+
+onMounted(async () => {
+  await attendanceStore.fetchHistory()
+})
 </script>
 
 <template>
@@ -88,7 +118,7 @@ const hasRecords = true
             ? 'bg-stitch-primary text-stitch-on-primary shadow-sm'
             : 'bg-stitch-surface-container border border-stitch-outline-variant text-stitch-on-surface-variant hover:bg-stitch-surface-container-high'
         "
-        @click="activeFilter = f.key"
+        @click="handleFilterClick(f.key)"
       >
         {{ f.label }}
       </button>

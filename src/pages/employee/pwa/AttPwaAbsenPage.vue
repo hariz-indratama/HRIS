@@ -7,7 +7,7 @@
  *
  * @packageDocumentation
  */
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   ArrowLeft,
@@ -20,20 +20,58 @@ import {
   History,
   AlertTriangle,
 } from 'lucide-vue-next'
+import { useAttendanceStore } from '@/stores/attendanceStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
+const attendanceStore = useAttendanceStore()
+const authStore = useAuthStore()
 
 const isVerified = ref(false)
 const isVerifying = ref(false)
-const verifyTime = ref('08:45:12')
-const employeeName = ref('Alex Thompson')
+const employeeName = ref('')
+const verifyTime = ref('')
+const isWithinGeofence = ref(true)
+
+onMounted(async () => {
+  if (authStore.user) {
+    employeeName.value = authStore.user.name
+  }
+  await attendanceStore.fetchToday()
+  if (attendanceStore.todayAttendance?.clockIn) {
+    isVerified.value = true
+    verifyTime.value = attendanceStore.todayAttendance.clockIn
+  }
+})
 
 async function simulateVerification(): Promise<void> {
   isVerifying.value = true
-  setTimeout(() => {
+  try {
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      })
+    })
+    const deviceId = 'pwa-' + Date.now().toString()
+    const success = await attendanceStore.clockIn(
+      position.coords.latitude,
+      position.coords.longitude,
+      deviceId,
+    )
+    if (success && attendanceStore.todayAttendance) {
+      isVerified.value = true
+      verifyTime.value = attendanceStore.todayAttendance.clockIn ?? ''
+      isWithinGeofence.value = true
+    } else {
+      alert(attendanceStore.error ?? 'Clock-in gagal')
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Clock-in gagal'
+    alert(msg)
+  } finally {
     isVerifying.value = false
-    isVerified.value = true
-  }, 2500)
+  }
 }
 
 function handleFaceId(): void {
@@ -141,9 +179,12 @@ function handleManual(): void {
         </div>
         <div class="flex flex-col items-end">
           <p class="text-[10px] uppercase tracking-wide text-stitch-on-surface-variant mb-1">Status Lokasi</p>
-          <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-medium">
+          <span
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+            :class="isWithinGeofence ? 'bg-green-50 text-green-700' : 'bg-red-50 text-stitch-error'"
+          >
             <MapPin class="w-3 h-3" />
-            Dalam Jangkauan
+            {{ isWithinGeofence ? 'Dalam Jangkauan' : 'Di Luar Jangkauan' }}
           </span>
         </div>
       </div>
