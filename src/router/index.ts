@@ -40,6 +40,61 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+
+  // ── Employee PWA (Mobile-First Attendance) ─────────────────────────────
+  {
+    path: '/pwa',
+    component: () => import('@/layouts/AppPwaLayout.vue'),
+    meta: { requiresAuth: true, role: 'employee' },
+    children: [
+      { path: '', redirect: '/pwa/home' },
+      {
+        path: 'home',
+        name: 'pwa-home',
+        component: () => import('@/pages/employee/pwa/AttPwaHomePage.vue'),
+      },
+      {
+        path: 'absen',
+        name: 'pwa-absen',
+        component: () => import('@/pages/employee/pwa/AttPwaAbsenPage.vue'),
+      },
+      {
+        path: 'riwayat',
+        name: 'pwa-riwayat',
+        component: () => import('@/pages/employee/pwa/AttPwaRiwayatPage.vue'),
+      },
+      {
+        path: 'profil',
+        name: 'pwa-profil',
+        component: () => import('@/pages/employee/pwa/AttPwaProfilPage.vue'),
+      },
+      {
+        path: 'pengajuan',
+        name: 'pwa-pengajuan',
+        component: () => import('@/pages/employee/pwa/AttPwaPengajuanPage.vue'),
+      },
+      {
+        path: 'pengajuan/cuti',
+        name: 'pwa-form-cuti',
+        component: () => import('@/pages/employee/pwa/AttPwaFormCutiTahunan.vue'),
+      },
+      {
+        path: 'pengajuan/lembur',
+        name: 'pwa-form-lembur',
+        component: () => import('@/pages/employee/pwa/AttPwaFormLembur.vue'),
+      },
+      {
+        path: 'pengajuan/izin-sakit',
+        name: 'pwa-form-izin-sakit',
+        component: () => import('@/pages/employee/pwa/AttPwaFormIzinSakit.vue'),
+      },
+      {
+        path: 'pengajuan/izin',
+        name: 'pwa-form-izin',
+        component: () => import('@/pages/employee/pwa/AttPwaFormIzin.vue'),
+      },
+    ],
+  },
   {
     path: '/admin',
     component: () => import('@/layouts/AppLayout.vue'),
@@ -76,11 +131,12 @@ router.beforeEach((to, _from, next) => {
     return
   }
   if (to.meta.role === 'admin' && !authStore.isAdmin) {
-    next({ name: 'dashboard' })
+    next({ name: 'pwa-home' })
     return
   }
   if (to.name === 'login' && authStore.isAuthenticated) {
-    next({ name: 'dashboard' })
+    // Redirect authenticated employees to the mobile PWA home
+    next(authStore.isAdmin ? { name: 'admin-dashboard' } : { name: 'pwa-home' })
     return
   }
   next()
