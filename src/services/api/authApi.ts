@@ -1,15 +1,20 @@
 import apiClient from './client'
+import type { LoginResponse, LogoutResponse } from '@/types/api/AuthResponse'
+
+export interface LoginPayload {
+  email: string
+  password: string
+  device_name?: string
+}
 
 export const authApi = {
-  async login(email: string, password: string) {
-    const response = await apiClient.post('/auth/login', { email, password })
+  async login(payload: LoginPayload): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>('/auth/login', payload)
     return response.data
   },
-  async register(payload: { name: string; email: string; password: string; password_confirmation: string }) {
-    const response = await apiClient.post('/auth/register', payload)
+
+  async logout(): Promise<LogoutResponse> {
+    const response = await apiClient.post<LogoutResponse>('/auth/logout')
     return response.data
-  },
-  async logout() {
-    await apiClient.post('/auth/logout')
   },
 }
