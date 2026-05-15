@@ -19,15 +19,14 @@
             for="email"
             class="text-sm font-medium text-foreground"
           >Email</label>
-          <input
+          <Input
             id="email"
             v-model="form.email"
             type="email"
             placeholder="you@example.com"
-            class="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             :class="{ 'border-destructive': errors.email }"
             autocomplete="email"
-          >
+          />
           <p
             v-if="errors.email"
             class="text-xs text-destructive"
@@ -41,15 +40,14 @@
             for="password"
             class="text-sm font-medium text-foreground"
           >Password</label>
-          <input
+          <Input
             id="password"
             v-model="form.password"
             type="password"
             placeholder="••••••••"
-            class="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             :class="{ 'border-destructive': errors.password }"
             autocomplete="current-password"
-          >
+          />
           <p
             v-if="errors.password"
             class="text-xs text-destructive"
@@ -82,6 +80,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { authApi } from '@/services/api/authApi'
+import { Input } from '@/components/ui/input'
 
 const router = useRouter()
 const authStore = useAuthStore()
