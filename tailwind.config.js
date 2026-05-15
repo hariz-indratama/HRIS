@@ -79,6 +79,33 @@ export default {
         'stitch-warning': '#f9ab00',
         'stitch-destructive': '#ea4335',
         'stitch-muted': '#9aa0a6',
+
+        // ─── Semantic Status Color Tokens ───
+        // Replaces literal Tailwind color classes with project-standard semantic scales.
+        // Used by useStatusStyles composable for consistent status UI.
+        status: {
+          success: {
+            50:  '#f0fdf4',
+            100: '#dcfce7',
+            200: '#bbf7d0',
+            600: '#16a34a',
+            700: '#15803d',
+          },
+          error: {
+            50:  '#fef2f2',
+            100: '#fee2e2',
+            200: '#fecaca',
+            600: '#dc2626',
+            700: '#b91c1c',
+          },
+          warning: {
+            50:  '#fffbeb',
+            100: '#fef3c7',
+            200: '#fde68a',
+            600: '#d97706',
+            700: '#b45309',
+          },
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
