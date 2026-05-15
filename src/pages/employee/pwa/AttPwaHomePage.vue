@@ -16,10 +16,12 @@ import {
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useLeaveStore } from '@/stores/leaveStore'
 import { useAuthStore } from '@/stores/authStore'
+import { useGeolocation } from '@/composables/useGeolocation'
 
 const attendanceStore = useAttendanceStore()
 const leaveStore = useLeaveStore()
 const authStore = useAuthStore()
+const geo = useGeolocation()
 
 // ── Live Clock ───────────────────────────────────────────────
 const currentTime = ref('08:45:12')
@@ -49,6 +51,16 @@ function updateClock(): void {
   })
 }
 
+// ── Helpers ────────────────────────────────────────────────
+async function getDeviceId(): Promise<string> {
+  let deviceId = localStorage.getItem('device_id')
+  if (!deviceId) {
+    deviceId = crypto.randomUUID()
+    localStorage.setItem('device_id', deviceId)
+  }
+  return deviceId
+}
+
 onMounted(async () => {
   updateClock()
   clockInterval = setInterval(updateClock, 1000)
@@ -66,22 +78,9 @@ onUnmounted(() => {
 // ── Actions ─────────────────────────────────────────────────
 async function handleClockIn(): Promise<void> {
   try {
-    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-    })
-    const deviceId =
-      'pwa-' +
-      (await navigator.clipboard.readText().catch(() =>
-        Math.random().toString(36).slice(2),
-      ))
-    await attendanceStore.clockIn(
-      position.coords.latitude,
-      position.coords.longitude,
-      deviceId,
-    )
+    const { latitude, longitude } = await geo.getCurrentPosition()
+    const deviceId = await getDeviceId()
+    await attendanceStore.clockIn(latitude, longitude, deviceId)
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Gagal clock-in'
     alert(msg)
@@ -91,15 +90,10 @@ async function handleClockIn(): Promise<void> {
 async function handleClockOut(): Promise<void> {
   if (!attendanceStore.todayAttendance) return
   try {
-    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-    })
+    const { latitude, longitude } = await geo.getCurrentPosition()
     await attendanceStore.clockOut(
-      position.coords.latitude,
-      position.coords.longitude,
+      latitude,
+      longitude,
       attendanceStore.todayAttendance.id,
     )
   } catch (err: unknown) {
