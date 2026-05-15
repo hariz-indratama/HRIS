@@ -22,6 +22,7 @@ import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import { useStatusStyles } from '@/composables/useStatusStyles'
+import SkeletonCard from '@/components/shared/SkeletonCard.vue'
 
 const attendanceStore = useAttendanceStore()
 const authStore = useAuthStore()
@@ -96,6 +97,9 @@ function handleManual(): void {
         <Info class="w-5 h-5 text-stitch-primary" />
       </button>
     </template>
+
+    <!-- ── Loading skeleton ─────────────────────────── -->
+    <SkeletonCard v-if="attendanceStore.isLoading" :lines="4" class="mb-4" />
 
     <!-- ── Scanner Section ──────────────────────────────── -->
     <section

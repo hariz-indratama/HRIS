@@ -18,12 +18,15 @@ import { useLeaveStore } from '@/stores/leaveStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import { useStatusStyles } from '@/composables/useStatusStyles'
+import SkeletonCard from '@/components/shared/SkeletonCard.vue'
 
 const attendanceStore = useAttendanceStore()
 const leaveStore = useLeaveStore()
 const authStore = useAuthStore()
 const geo = useGeolocation()
 const statusStyles = useStatusStyles()
+
+const hasError = computed(() => attendanceStore.error !== null)
 
 // ── CTA button class ────────────────────────────────────────
 const ctaClass = computed(() =>
@@ -118,6 +121,38 @@ async function handleClockOut(): Promise<void> {
       <span class="text-base font-semibold text-stitch-primary font-sans">Attendance Pro</span>
     </template>
 
+    <!-- ── Loading skeletons ──────────────────────────── -->
+    <template v-if="attendanceStore.isLoading || leaveStore.isLoading">
+      <SkeletonCard :lines="4" />
+      <SkeletonCard :lines="3" class="mt-4" />
+      <div class="mt-4 flex gap-2">
+        <SkeletonCard :lines="1" class="min-w-[110px]" />
+        <SkeletonCard :lines="1" class="min-w-[110px]" />
+        <SkeletonCard :lines="1" class="min-w-[110px]" />
+      </div>
+    </template>
+
+    <!-- ── Error banner ───────────────────────────────── -->
+    <template v-else-if="hasError">
+      <div
+        class="mb-4 flex items-center justify-between p-3 rounded-xl"
+        :class="[statusStyles.error.bg, statusStyles.error.border]"
+      >
+        <span class="text-sm" :class="statusStyles.error.text">
+          {{ attendanceStore.error }}
+        </span>
+        <button
+          class="px-3 py-1.5 rounded-full text-xs font-medium border"
+          :class="[statusStyles.error.border, statusStyles.error.text]"
+          @click="attendanceStore.fetchToday()"
+        >
+          Ulangi
+        </button>
+      </div>
+    </template>
+
+    <!-- ── Actual content ─────────────────────────────── -->
+    <template v-else>
     <!-- ── Greeting ──────────────────────────────────────── -->
     <div class="flex justify-between items-start mb-4">
       <div>
@@ -238,5 +273,6 @@ async function handleClockOut(): Promise<void> {
         </div>
       </div>
     </section>
+    </template>
   </AppPwaLayout>
 </template>

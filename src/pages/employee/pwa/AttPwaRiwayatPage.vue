@@ -11,6 +11,7 @@ import { ref, computed, onMounted } from 'vue'
 import { CalendarDays, Clock, LogOut, Info } from 'lucide-vue-next'
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useStatusStyles } from '@/composables/useStatusStyles'
+import SkeletonCard from '@/components/shared/SkeletonCard.vue'
 
 const activeFilter = ref('semua')
 
@@ -72,6 +73,7 @@ const attendanceRecords = computed(() =>
 )
 
 const hasRecords = computed(() => attendanceStore.attendanceHistory.length > 0)
+const hasError = computed(() => attendanceStore.error !== null)
 
 async function applyFilter(filter: string): Promise<void> {
   activeFilter.value = filter
@@ -110,6 +112,24 @@ onMounted(async () => {
       </button>
     </template>
 
+    <!-- ── Error Banner ──────────────────────────────── -->
+    <div
+      v-if="hasError"
+      class="mb-4 flex items-center justify-between p-3 rounded-xl"
+      :class="[statusStyles.error.bg, statusStyles.error.border]"
+    >
+      <span class="text-sm" :class="statusStyles.error.text">
+        {{ attendanceStore.error }}
+      </span>
+      <button
+        class="px-3 py-1.5 rounded-full text-xs font-medium border"
+        :class="[statusStyles.error.border, statusStyles.error.text]"
+        @click="attendanceStore.fetchHistory()"
+      >
+        Ulangi
+      </button>
+    </div>
+
     <!-- ── Filter Chips ──────────────────────────────── -->
     <nav class="flex overflow-x-auto gap-2 mb-4 pb-1 -mx-1 px-1 no-scrollbar">
       <button
@@ -129,7 +149,14 @@ onMounted(async () => {
 
     <!-- ── Timeline ──────────────────────────────────── -->
     <section class="space-y-4">
-      <template v-if="hasRecords">
+      <!-- Loading state -->
+      <template v-if="attendanceStore.isLoading">
+        <div class="space-y-4">
+          <SkeletonCard v-for="i in 5" :key="i" :lines="3" />
+        </div>
+      </template>
+
+      <template v-else-if="hasRecords">
         <div
           v-for="(record, idx) in attendanceRecords"
           :key="idx"
