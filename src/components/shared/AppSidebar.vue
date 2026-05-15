@@ -9,7 +9,7 @@
  * @packageDocumentation
  */
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import {
   Calendar,
   ChevronLeft,
@@ -48,7 +48,6 @@ const emit = defineEmits<{
 
 const authStore = useAuthStore()
 const route = useRoute()
-const router = useRouter()
 
 // ─── Icon Map ─────────────────────────────────────────────────────────────────
 
@@ -129,24 +128,18 @@ function isActive(item: NavItem): boolean {
         v-for="item in navItems"
         :key="item.route"
       >
-        <div
-          v-if="isActive(item)"
-          class="bg-primary/10 border-r-2 border-primary h-10 rounded-l-md absolute left-0"
-          aria-hidden="true"
-        />
-        <a
-          :href="item.route"
+        <RouterLink
+          :to="item.route"
           :class="
             cn(
               'flex items-center gap-3 h-10 px-3 rounded-md text-sm font-medium transition-colors relative',
               isActive(item)
-                ? 'bg-primary/10 text-primary'
+                ? 'bg-primary/10 text-primary border-r-2 border-primary'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               !isOpen && 'justify-center px-0',
             )
           "
           :aria-current="isActive(item) ? 'page' : undefined"
-          @click.prevent="router.push(item.route)"
         >
           <component
             :is="iconMap[item.icon]"
@@ -157,7 +150,7 @@ function isActive(item: NavItem): boolean {
             v-if="isOpen"
             class="truncate"
           >{{ item.name }}</span>
-        </a>
+        </RouterLink>
       </template>
     </nav>
   </aside>
