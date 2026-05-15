@@ -47,6 +47,7 @@ function goBack(): void {
     <header
       class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-stitch-outline-variant
              flex items-center justify-between px-4 shadow-sm"
+      :style="{ paddingTop: 'env(safe-area-inset-top)' }"
     >
       <!-- Left: Back button slot -->
       <div class="w-10">
@@ -77,7 +78,8 @@ function goBack(): void {
 
     <!-- ── Page Content ───────────────────────────────────────── -->
     <main
-      class="flex-1 overflow-y-auto pt-16 pb-24 px-4"
+      class="flex-1 overflow-y-auto pt-16 px-4"
+      :style="{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))' }"
     >
       <slot />
     </main>
@@ -85,7 +87,12 @@ function goBack(): void {
     <!-- ── Bottom Navigation Bar ──────────────────────────────── -->
     <nav
       class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-stitch-outline-variant
-             shadow-lg flex justify-around items-center px-4 py-2 rounded-t-2xl"
+             shadow-lg flex justify-around items-center px-4"
+      :style="{
+        paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))',
+        paddingTop: 'env(safe-area-inset-top)',
+        borderRadius: '1rem 1rem 0 0',
+      }"
     >
       <RouterLink
         v-for="item in navItems"
