@@ -21,21 +21,13 @@ import {
 const router = useRouter()
 
 const leaveType = ref('Cuti Regular')
-const leaveTypes = ['Cuti Regular', 'Cuti Besar', 'Cuti Melahirkan']
+const leaveTypes = ['Cuti Regular', 'Cuti Besar', 'Cuti Melanjutkan']
 const reason = ref('')
-const attachment = ref<File | null>(null)
 const startDate = ref('12 Okt 2023')
 const endDate = ref('15 Okt 2023')
 const days = ref(3)
 
 const remainingDays = computed(() => 12 - days.value)
-
-const leaveTypes2 = [
-  { key: 'regular', label: 'Cuti Regular' },
-  { key: 'besar', label: 'Cuti Besar' },
-  { key: 'melahirkan', label: 'Cuti Melahirkan' },
-]
-const selectedType = ref('regular')
 
 function incrementDays(): void {
   if (days.value < 7) days.value++

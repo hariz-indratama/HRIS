@@ -76,10 +76,10 @@
         </div>
         <div class="flex items-center gap-3">
           <span
-            v-if="record.totalHours !== null"
+            v-if="record.totalHours != null"
             class="text-sm text-muted-foreground"
           >
-            {{ record.totalHours.toFixed(1) }}h
+            {{ (record.totalHours ?? 0).toFixed(1) }}h
           </span>
           <span
             class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
@@ -121,7 +121,8 @@ const months = [
 
 const years = Array.from({ length: 5 }, (_, i) => now.getFullYear() - i)
 
-function formatDate(iso: string): string {
+function formatDate(iso: string | null): string {
+  if (!iso) return '—'
   return new Date(iso).toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
@@ -130,7 +131,8 @@ function formatDate(iso: string): string {
   })
 }
 
-function formatTime(iso: string): string {
+function formatTime(iso: string | null): string {
+  if (!iso) return '—'
   return new Date(iso).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',

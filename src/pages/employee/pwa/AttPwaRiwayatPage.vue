@@ -10,7 +10,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { CalendarDays, Clock, LogOut, Info } from 'lucide-vue-next'
 import { useAttendanceStore } from '@/stores/attendanceStore'
-import { useAuthStore } from '@/stores/authStore'
 
 const activeFilter = ref('semua')
 
@@ -23,7 +22,6 @@ const filters = [
 ]
 
 const attendanceStore = useAttendanceStore()
-const authStore = useAuthStore()
 
 const statusClassMap: Record<string, string> = {
   on_time: 'bg-green-50 text-green-700 border-green-200',

@@ -137,7 +137,7 @@ const weeklyLate = computed(
 )
 
 const weeklyOnTime = computed(
-  () => attendanceStore.attendanceHistory.filter((a) => a.status === 'on-time').length,
+  () => attendanceStore.attendanceHistory.filter((a) => a.status === 'on_time').length,
 )
 
 async function handleClockIn(): Promise<void> {

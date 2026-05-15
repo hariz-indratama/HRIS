@@ -10,6 +10,6 @@ export interface User {
   hourlyRate?: number
   departmentId?: number
   avatar?: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
 }

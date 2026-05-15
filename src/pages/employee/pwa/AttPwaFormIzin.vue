@@ -14,7 +14,6 @@ import {
   Minus,
   Paperclip,
   User,
-  Clock,
 } from 'lucide-vue-next'
 
 const router = useRouter()

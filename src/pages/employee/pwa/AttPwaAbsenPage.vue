@@ -8,22 +8,18 @@
  * @packageDocumentation
  */
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import {
-  ArrowLeft,
   Info,
   CheckCircle,
   MapPin,
-  Face,
+  Fingerprint,
   Keyboard,
   AlertCircle,
   History,
-  AlertTriangle,
 } from 'lucide-vue-next'
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useAuthStore } from '@/stores/authStore'
 
-const router = useRouter()
 const attendanceStore = useAttendanceStore()
 const authStore = useAuthStore()
 
@@ -198,7 +194,7 @@ function handleManual(): void {
           class="flex-1 h-11 flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
           @click="handleFaceId"
         >
-          <Face class="w-4 h-4" />
+          <Fingerprint class="w-4 h-4" />
           Face ID
         </button>
         <button

@@ -8,17 +8,15 @@
  * @packageDocumentation
  */
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
 import {
   MapPin,
-  Login,
-  Logout,
+  LogIn,
+  LogOut,
 } from 'lucide-vue-next'
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useLeaveStore } from '@/stores/leaveStore'
 import { useAuthStore } from '@/stores/authStore'
 
-const router = useRouter()
 const attendanceStore = useAttendanceStore()
 const leaveStore = useLeaveStore()
 const authStore = useAuthStore()
@@ -30,7 +28,7 @@ const currentDate = ref('Rabu, 14 Mei 2026')
 let clockInterval: ReturnType<typeof setInterval>
 
 // ── Geofence State ───────────────────────────────────────────
-const isWithinGeofence = ref(true) // default to true so button works in dev
+// Geofence check (dev-friendly: always true until backend configures office location)
 
 // ── Computed State ──────────────────────────────────────────
 const isClockedIn = computed(() => attendanceStore.todayAttendance !== null)
@@ -200,7 +198,7 @@ async function handleClockOut(): Promise<void> {
         :class="isClockedIn ? 'bg-green-600 hover:bg-green-700' : 'bg-stitch-primary hover:bg-stitch-primary-container'"
         @click="isClockedIn ? handleClockOut() : handleClockIn()"
       >
-        <component :is="isClockedIn ? Logout : Login" class="w-5 h-5" />
+        <component :is="isClockedIn ? LogOut : LogIn" class="w-5 h-5" />
         {{ isClockedIn ? 'Clock Out' : 'Clock In' }}
       </button>
     </div>

@@ -136,6 +136,7 @@ export const useLeaveStore = defineStore('leave', () => {
     pendingCount,
     vacationBalance,
     sickBalance,
+    personalBalance,
     overtimeThisMonth,
     overtimeRemaining,
     recentRequests,

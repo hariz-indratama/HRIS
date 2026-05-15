@@ -10,6 +10,7 @@ export interface Attendance {
   clockOutLng: number | null
   status: 'on_time' | 'late' | 'absent'
   notes?: string
+  totalHours?: number | null
   createdAt: string
   updatedAt: string
 }

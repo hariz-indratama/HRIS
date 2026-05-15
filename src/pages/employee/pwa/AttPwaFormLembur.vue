@@ -12,8 +12,6 @@ import {
   Clock,
   Info,
   Calendar,
-  Plus,
-  Minus,
   Paperclip,
 } from 'lucide-vue-next'
 

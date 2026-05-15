@@ -39,9 +39,10 @@ export function useAuth() {
   ): Promise<{ success: boolean; message?: string }> {
     authStore.isLoading = true
     try {
-      const response = await authApi.login(email, password)
+      const response = await authApi.login({ email, password })
       if (response.success) {
-        authStore.setAuth(response.token, response.user)
+        // Sanctum stateful: token in session cookie, user from response
+        authStore.setAuth('', response.data.user)
         return { success: true }
       }
       return { success: false, message: response.message || 'Login failed' }

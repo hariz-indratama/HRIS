@@ -18,7 +18,7 @@ export interface LoginResponse {
   success: boolean
   message: string
   data: {
-    user: Pick<User, 'id' | 'name' | 'email' | 'role' | 'department' | 'position' | 'avatarUrl'>
+    user: Pick<User, 'id' | 'name' | 'email' | 'role' | 'department' | 'position' | 'avatarUrl' | 'phone'>
   }
 }
 

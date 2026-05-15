@@ -129,9 +129,13 @@ async function handleLogin(): Promise<void> {
 
   isSubmitting.value = true
   try {
-    const response = await authApi.login(form.email, form.password)
+    const response = await authApi.login({ email: form.email, password: form.password })
     if (response.success) {
-      authStore.setAuth(response.token, response.user)
+      // Sanctum stateful: token is set via session cookie, user from response body
+      authStore.setAuth('', {
+        ...response.data.user,
+        phone: response.data.user.phone ?? null,
+      })
       const redirect = authStore.isAdmin ? '/admin' : '/'
       router.push(redirect)
     } else {

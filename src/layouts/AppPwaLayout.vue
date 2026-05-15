@@ -10,7 +10,7 @@
  */
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Home, Fingerprint, History, Person, ArrowLeft } from 'lucide-vue-next'
+import { Home, Fingerprint, History, User, ArrowLeft } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -29,7 +29,7 @@ const navItems = [
   { name: 'home', label: 'Home', to: '/pwa/home', icon: Home },
   { name: 'absen', label: 'Absen', to: '/pwa/absen', icon: Fingerprint },
   { name: 'riwayat', label: 'Riwayat', to: '/pwa/riwayat', icon: History },
-  { name: 'profil', label: 'Profil', to: '/pwa/profil', icon: Person },
+  { name: 'profil', label: 'Profil', to: '/pwa/profil', icon: User },
 ]
 
 function isActive(name: string): boolean {
