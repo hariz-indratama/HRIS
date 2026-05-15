@@ -21,7 +21,7 @@
           >Email</label>
           <Input
             id="email"
-            v-model="emailModel"
+            v-model="email"
             type="email"
             placeholder="you@example.com"
             :class="{ 'border-destructive': errors.email }"
@@ -42,7 +42,7 @@
           >Password</label>
           <Input
             id="password"
-            v-model="passwordModel"
+            v-model="password"
             type="password"
             placeholder="••••••••"
             :class="{ 'border-destructive': errors.password }"
@@ -85,8 +85,8 @@ import { Input } from '@/components/ui/input'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const emailModel = defineModel<string>({ default: '' })
-const passwordModel = defineModel<string>({ default: '' })
+const email = ref('')
+const password = ref('')
 
 const errors = reactive({
   email: '',
@@ -101,18 +101,18 @@ function validateForm(): boolean {
   errors.email = ''
   errors.password = ''
 
-  if (!emailModel.value) {
+  if (!email.value) {
     errors.email = 'Email is required.'
     valid = false
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailModel.value)) {
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
     errors.email = 'Please enter a valid email address.'
     valid = false
   }
 
-  if (!passwordModel.value) {
+  if (!password.value) {
     errors.password = 'Password is required.'
     valid = false
-  } else if (passwordModel.value.length < 8) {
+  } else if (password.value.length < 8) {
     errors.password = 'Password must be at least 8 characters.'
     valid = false
   }
@@ -126,9 +126,8 @@ async function handleLogin(): Promise<void> {
 
   isSubmitting.value = true
   try {
-    const response = await authApi.login({ email: emailModel.value, password: passwordModel.value })
+    const response = await authApi.login({ email: email.value, password: password.value })
     if (response.success) {
-      // Sanctum stateful: token is set via session cookie, user from response body
       authStore.setAuth('', {
         ...response.data.user,
         phone: response.data.user.phone ?? null,

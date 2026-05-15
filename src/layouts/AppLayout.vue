@@ -47,7 +47,6 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import { LogOut } from 'lucide-vue-next'
 import AppSidebar from '@/components/shared/AppSidebar.vue'
 import { useSidebarState } from '@/composables/useSidebarState'
 
@@ -65,8 +64,4 @@ const userInitials = computed(() => {
     .slice(0, 2)
 })
 
-function handleLogout(): void {
-  authStore.clearAuth()
-  router.push('/auth/login')
-}
 </script>
