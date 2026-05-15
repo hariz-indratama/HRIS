@@ -38,6 +38,7 @@ export const useAttendanceStore = defineStore('attendance', () => {
       attendanceHistory.value = response.data
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : 'Gagal mengambil riwayat'
+      attendanceHistory.value = []
     } finally {
       isLoading.value = false
     }
