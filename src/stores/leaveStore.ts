@@ -102,14 +102,10 @@ export const useLeaveStore = defineStore('leave', () => {
       submitError.value =
         err instanceof Error ? err.message : 'Gagal mengirim pengajuan'
       return false
-    } finally {
-      // Reset submit status after short delay so UI can react
-      setTimeout(() => {
-        if (submitStatus.value !== 'loading') {
-          submitStatus.value = 'idle'
-        }
-      }, 4000)
     }
+    // NOTE: Caller is responsible for calling resetSubmitStatus() after the
+    // success/error UI has been displayed (e.g., after a toast or navigation delay).
+    // Previously handled via setTimeout — removed due to race condition risk.
   }
 
   async function cancelRequest(id: number): Promise<void> {
@@ -118,6 +114,12 @@ export const useLeaveStore = defineStore('leave', () => {
     myRequests.value = myRequests.value.filter((r) => r.id !== id)
   }
 
+  /**
+   * Resets the submit status. Call this after the success/error UI
+   * has been displayed (e.g., after a toast notification or navigation delay).
+   * Previously this was handled automatically via setTimeout — removed
+   * due to race condition risk when user navigates away and back within 4s.
+   */
   function resetSubmitStatus(): void {
     submitStatus.value = 'idle'
     submitError.value = null
