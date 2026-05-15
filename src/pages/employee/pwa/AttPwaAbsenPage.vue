@@ -7,7 +7,7 @@
  *
  * @packageDocumentation
  */
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import {
   Info,
   CheckCircle,
@@ -16,67 +16,71 @@ import {
   Keyboard,
   AlertCircle,
   History,
+  RefreshCw,
 } from 'lucide-vue-next'
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useAuthStore } from '@/stores/authStore'
+import { useGeolocation } from '@/composables/useGeolocation'
 
 const attendanceStore = useAttendanceStore()
 const authStore = useAuthStore()
+const geo = useGeolocation()
 
-const isVerified = ref(false)
+// ── State ──────────────────────────────────────────────────────
 const isVerifying = ref(false)
-const employeeName = ref('')
-const verifyTime = ref('')
+const verifyError = ref<string | null>(null)
+
+const employeeName = computed(() => authStore.user?.name ?? 'Karyawan')
+const isVerified = computed(
+  () => attendanceStore.todayAttendance?.clockIn != null,
+)
+const verifyTime = computed(() => attendanceStore.todayAttendance?.clockIn ?? '')
 const isWithinGeofence = ref(true)
 
 onMounted(async () => {
-  if (authStore.user) {
-    employeeName.value = authStore.user.name
-  }
   await attendanceStore.fetchToday()
-  if (attendanceStore.todayAttendance?.clockIn) {
-    isVerified.value = true
-    verifyTime.value = attendanceStore.todayAttendance.clockIn
+  if (isVerified.value) {
+    isWithinGeofence.value = true
   }
 })
 
+// ── Status color classes (semantic — Phase 2 token migration to follow) ──────
+const successClass = 'bg-green-50 text-green-700 border-green-200'
+const errorClass = 'bg-stitch-error/10 text-stitch-error'
+
+// ── Actions ──────────────────────────────────────────────────────
 async function simulateVerification(): Promise<void> {
+  if (isVerifying.value) return
   isVerifying.value = true
+  verifyError.value = null
+
   try {
-    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-      })
-    })
-    const deviceId = 'pwa-' + Date.now().toString()
-    const success = await attendanceStore.clockIn(
-      position.coords.latitude,
-      position.coords.longitude,
-      deviceId,
-    )
-    if (success && attendanceStore.todayAttendance) {
-      isVerified.value = true
-      verifyTime.value = attendanceStore.todayAttendance.clockIn ?? ''
-      isWithinGeofence.value = true
+    const { latitude, longitude } = await geo.getCurrentPosition()
+    const deviceId = `pwa-${crypto.randomUUID()}`
+    const success = await attendanceStore.clockIn(latitude, longitude, deviceId)
+
+    if (!success) {
+      verifyError.value = attendanceStore.error ?? 'Clock-in gagal'
     } else {
-      alert(attendanceStore.error ?? 'Clock-in gagal')
+      isWithinGeofence.value = true
     }
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Clock-in gagal'
-    alert(msg)
+    verifyError.value = err instanceof Error ? err.message : 'Gagal clock-in'
   } finally {
     isVerifying.value = false
   }
 }
 
+function retry(): void {
+  verifyError.value = null
+  simulateVerification()
+}
+
 function handleFaceId(): void {
-  // TODO: Wire up WebAuthn / Face Recognition API
   alert('Face ID: Coming soon!')
 }
 
 function handleManual(): void {
-  // TODO: Navigate to manual entry form
   alert('Manual entry: Coming soon!')
 }
 </script>
@@ -114,7 +118,7 @@ function handleManual(): void {
         >
           <CheckCircle
             v-if="isVerified"
-            class="w-16 h-16 text-green-600"
+            class="w-16 h-16 text-green-700"
           />
           <svg
             v-else
@@ -136,6 +140,19 @@ function handleManual(): void {
         {{ isVerified ? employeeName : isVerifying ? 'Memverifikasi...' : 'Menunggu verifikasi...' }}
       </p>
 
+      <!-- Error Banner -->
+      <div
+        v-if="verifyError"
+        class="mt-3 flex items-center justify-center gap-2 text-stitch-error text-sm"
+      >
+        <AlertCircle class="w-4 h-4" />
+        <span>{{ verifyError }}</span>
+        <button class="underline ml-1" @click="retry">
+          <RefreshCw class="w-3.5 h-3.5 inline mr-0.5" />
+          Ulangi
+        </button>
+      </div>
+
       <!-- Trigger (auto on mount or tap) -->
       <button
         v-if="!isVerified && !isVerifying"
@@ -154,16 +171,15 @@ function handleManual(): void {
       <!-- Header -->
       <div
         class="p-3 flex items-center gap-3 border-b border-stitch-outline-variant"
-        :class="isVerified ? 'bg-green-50' : 'bg-stitch-surface-container'"
+        :class="successClass"
       >
         <div
-          class="w-10 h-10 rounded-full flex items-center justify-center"
-          :class="isVerified ? 'bg-green-100 text-green-700' : 'bg-stitch-surface-variant text-stitch-on-surface-variant'"
+          class="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-700"
         >
           <CheckCircle class="w-5 h-5" />
         </div>
         <div>
-          <p class="text-xs font-medium text-green-700">Verifikasi Berhasil</p>
+          <p class="text-xs font-medium text-green-700" :class="successClass">Verifikasi Berhasil</p>
           <p class="text-sm font-semibold text-stitch-on-surface">{{ employeeName }}</p>
         </div>
       </div>
@@ -191,21 +207,21 @@ function handleManual(): void {
       <p class="text-xs font-medium text-stitch-on-surface-variant">atau gunakan cara lain</p>
       <div class="flex gap-3 justify-center">
         <button
-          class="flex-1 h-11 flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
+          class="flex-1 min-h-[44px] flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
           @click="handleFaceId"
         >
           <Fingerprint class="w-4 h-4" />
           Face ID
         </button>
         <button
-          class="flex-1 h-11 flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
+          class="flex-1 min-h-[44px] flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
           @click="handleManual"
         >
           <Keyboard class="w-4 h-4" />
           Manual
         </button>
       </div>
-      <button class="inline-block text-xs text-stitch-primary underline py-1">
+      <button class="inline-block text-xs text-stitch-primary underline py-1 min-h-[44px]">
         Laporkan Masalah
       </button>
     </section>
