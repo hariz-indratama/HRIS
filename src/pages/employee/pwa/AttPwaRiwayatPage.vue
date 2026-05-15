@@ -75,6 +75,22 @@ const attendanceRecords = computed(() =>
 const hasRecords = computed(() => attendanceStore.attendanceHistory.length > 0)
 const hasError = computed(() => attendanceStore.error !== null)
 
+/**
+ * Filter the attendance history by status.
+ *
+ * @remarks
+ * Backend support:
+ * - 'hadir' → 'on_time' ✅ (backend supported)
+ * - 'terlambat' → 'late' ✅ (backend supported)
+ * - 'semua' → no filter ✅ (backend supported)
+ *
+ * Backend NOT yet supported:
+ * - 'izin' → no filter applied (backend does not return leave-linked attendance)
+ * - 'wfh' → no filter applied (WFH is not a attendance status)
+ *
+ * The 'izin' and 'wfh' filters currently fall back to 'semua' behavior
+ * until the backend adds attendance-leave join logic.
+ */
 async function applyFilter(filter: string): Promise<void> {
   activeFilter.value = filter
   const statusMap: Record<string, string | undefined> = {

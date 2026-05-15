@@ -31,15 +31,9 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await userApi.getMe()
       if (response.success && response.data) {
         user.value = {
-          id: response.data.id,
-          name: response.data.name,
-          email: response.data.email,
+          ...response.data,
           role: response.data.role as 'admin' | 'employee',
-          department: response.data.department ?? null,
-          position: response.data.position ?? null,
-          avatarUrl: response.data.avatarUrl ?? null,
-          phone: response.data.phone ?? null,
-        }
+        } as User
       }
     } catch {
       // Token invalid — clear session
