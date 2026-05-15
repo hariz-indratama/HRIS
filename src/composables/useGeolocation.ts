@@ -8,7 +8,7 @@
  * @packageDocumentation
  */
 
-import { onMounted, ref } from 'vue'
+import { reactive, toRefs } from 'vue'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ interface GeolocationState {
 // ─── Composable ───────────────────────────────────────────────────────────────
 
 export function useGeolocation() {
-  const state = ref<GeolocationState>({
+  const state = reactive<GeolocationState>({
     latitude: null,
     longitude: null,
     error: null,
@@ -40,27 +40,27 @@ export function useGeolocation() {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         const errMsg = 'Geolocation is not supported by this browser'
-        state.value.error = errMsg
+        state.error = errMsg
         reject(new Error(errMsg))
         return
       }
 
-      state.value.loading = true
-      state.value.error = null
+      state.loading = true
+      state.error = null
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          state.value.latitude = position.coords.latitude
-          state.value.longitude = position.coords.longitude
-          state.value.loading = false
+          state.latitude = position.coords.latitude
+          state.longitude = position.coords.longitude
+          state.loading = false
           resolve({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           })
         },
         (err) => {
-          state.value.loading = false
-          state.value.error = err.message
+          state.loading = false
+          state.error = err.message
           reject(new Error(err.message))
         },
         {
@@ -72,12 +72,8 @@ export function useGeolocation() {
     })
   }
 
-  onMounted(() => {
-    // Callers are responsible for requesting position — do not auto-fetch on mount.
-  })
-
   return {
-    ...state.value,
+    ...toRefs(state),
     getCurrentPosition,
   }
 }
