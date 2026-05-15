@@ -1,77 +1,6 @@
 <template>
   <div class="flex h-screen overflow-hidden bg-background">
-    <!-- Sidebar -->
-    <aside
-      :class="[
-        'flex flex-col bg-card border-r border-border transition-all duration-300',
-        isSidebarOpen ? 'w-64' : 'w-16',
-        'max-md:fixed max-md:z-50 max-md:h-full',
-        isSidebarOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full',
-      ]"
-    >
-      <!-- Logo / App Name -->
-      <div class="flex items-center h-16 px-4 border-b border-border">
-        <span
-          v-if="isSidebarOpen"
-          class="text-lg font-bold text-foreground"
-        >HRIS</span>
-        <button
-          class="p-2 rounded-md hover:bg-accent max-md:hidden"
-          aria-label="Toggle sidebar"
-          @click="toggleSidebar"
-        >
-          <Menu
-            :size="20"
-            class="text-muted-foreground"
-          />
-        </button>
-      </div>
-
-      <!-- Navigation -->
-      <nav class="flex-1 px-2 py-4 space-y-1">
-        <template v-if="authStore.isAdmin">
-          <RouterLink
-            v-for="item in adminNavItems"
-            :key="item.name"
-            :to="item.to"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            active-class="bg-accent text-foreground"
-          >
-            <component
-              :is="item.icon"
-              :size="20"
-            />
-            <span v-if="isSidebarOpen">{{ item.label }}</span>
-          </RouterLink>
-        </template>
-        <template v-else>
-          <RouterLink
-            v-for="item in employeeNavItems"
-            :key="item.name"
-            :to="item.to"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            active-class="bg-accent text-foreground"
-          >
-            <component
-              :is="item.icon"
-              :size="20"
-            />
-            <span v-if="isSidebarOpen">{{ item.label }}</span>
-          </RouterLink>
-        </template>
-      </nav>
-
-      <!-- Logout -->
-      <div class="px-2 py-4 border-t border-border">
-        <button
-          class="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-accent transition-colors"
-          @click="handleLogout"
-        >
-          <LogOut :size="20" />
-          <span v-if="isSidebarOpen">Logout</span>
-        </button>
-      </div>
-    </aside>
+    <AppSidebar />
 
     <!-- Mobile sidebar backdrop -->
     <div
@@ -115,34 +44,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import {
-  Home,
-  Clock,
-  Calendar,
-  Users,
-  DollarSign,
-  LogOut,
-  Menu,
-} from 'lucide-vue-next'
+import { LogOut } from 'lucide-vue-next'
+import AppSidebar from '@/components/shared/AppSidebar.vue'
+import { useSidebarState } from '@/composables/useSidebarState'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const isSidebarOpen = ref(false)
-
-const employeeNavItems = [
-  { name: 'dashboard', label: 'Home', to: '/', icon: Home },
-  { name: 'history', label: 'History', to: '/history', icon: Clock },
-  { name: 'leave-request', label: 'Leave Request', to: '/leave', icon: Calendar },
-]
-
-const adminNavItems = [
-  { name: 'admin-dashboard', label: 'Dashboard', to: '/admin', icon: Home },
-  { name: 'admin-employees', label: 'Employees', to: '/admin/employees', icon: Users },
-  { name: 'admin-payroll', label: 'Payroll', to: '/admin/payroll', icon: DollarSign },
-]
+const { isOpen: isSidebarOpen, toggle: toggleSidebar } = useSidebarState()
 
 const userInitials = computed(() => {
   const name = authStore.user?.name ?? ''
@@ -153,10 +64,6 @@ const userInitials = computed(() => {
     .toUpperCase()
     .slice(0, 2)
 })
-
-function toggleSidebar(): void {
-  isSidebarOpen.value = !isSidebarOpen.value
-}
 
 function handleLogout(): void {
   authStore.clearAuth()

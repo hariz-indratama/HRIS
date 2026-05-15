@@ -24,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
+import { useSidebarState } from '@/composables/useSidebarState'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,13 +37,12 @@ interface NavItem {
 // ─── Props & Emits ────────────────────────────────────────────────────────────
 
 const props = defineProps<{
-  isOpen: boolean
   items?: NavItem[]
 }>()
 
-const emit = defineEmits<{
-  toggle: []
-}>()
+// ─── Composable State ──────────────────────────────────────────────────────────
+
+const { isOpen, toggle } = useSidebarState()
 
 // ─── Stores ───────────────────────────────────────────────────────────────────
 
@@ -106,7 +106,7 @@ function isActive(item: NavItem): boolean {
         size="icon"
         class="text-muted-foreground hover:text-foreground h-8 w-8"
         :aria-label="isOpen ? 'Collapse sidebar' : 'Expand sidebar'"
-        @click="emit('toggle')"
+        @click="toggle"
       >
         <ChevronLeft
           v-if="isOpen"
