@@ -11,6 +11,7 @@ import { useRouter } from 'vue-router'
 import { computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useLeaveStore } from '@/stores/leaveStore'
+import { useStatusStyles } from '@/composables/useStatusStyles'
 import {
   Settings,
   Bell,
@@ -28,6 +29,7 @@ import {
 const router = useRouter()
 const authStore = useAuthStore()
 const leaveStore = useLeaveStore()
+const statusStyles = useStatusStyles()
 
 // ── Profile computed ────────────────────────────────────────────
 const profile = computed(() => {
@@ -192,7 +194,8 @@ function handleLogout(): void {
 
     <!-- ── Logout ─────────────────────────────────────── -->
     <button
-      class="w-full h-12 border border-stitch-error text-stitch-error rounded-full text-sm font-medium hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+      class="w-full h-12 border rounded-full text-sm font-medium flex items-center justify-center gap-2 transition-colors hover:opacity-90"
+      :class="[statusStyles.error.bg, statusStyles.error.text, statusStyles.error.border].join(' ')"
       @click="handleLogout"
     >
       <LogOut class="w-4 h-4" />

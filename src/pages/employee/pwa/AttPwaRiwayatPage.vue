@@ -10,6 +10,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { CalendarDays, Clock, LogOut, Info } from 'lucide-vue-next'
 import { useAttendanceStore } from '@/stores/attendanceStore'
+import { useStatusStyles } from '@/composables/useStatusStyles'
 
 const activeFilter = ref('semua')
 
@@ -22,21 +23,22 @@ const filters = [
 ]
 
 const attendanceStore = useAttendanceStore()
+const statusStyles = useStatusStyles()
 
-const statusClassMap: Record<string, string> = {
-  on_time: 'bg-green-50 text-green-700 border-green-200',
-  late: 'bg-amber-50 text-amber-700 border-amber-200',
-  absent: 'bg-red-50 text-stitch-error border-red-200',
-  pending: 'bg-amber-50 text-amber-600 border-amber-200',
-  approved: 'bg-green-50 text-green-700 border-green-200',
-  rejected: 'bg-red-50 text-stitch-error border-red-200',
+const statusClassMap: Record<string, { bg: string; text: string; border: string }> = {
+  on_time:  statusStyles.success,
+  late:     statusStyles.warning,
+  absent:   statusStyles.error,
+  pending:  statusStyles.warning,
+  approved: statusStyles.success,
+  rejected: statusStyles.error,
 }
 
 const dotClassMap: Record<string, string> = {
   on_time: 'bg-stitch-primary',
   late: 'bg-stitch-tertiary-container',
   absent: 'bg-stitch-error',
-  pending: 'bg-amber-400',
+  pending: 'bg-amber-400',  // literal: pending status dot — replace after token expansion
   approved: 'bg-stitch-success',
   rejected: 'bg-stitch-error',
 }
@@ -49,6 +51,7 @@ const attendanceRecords = computed(() =>
       day: 'numeric',
       month: 'short',
     })
+    const classes = statusClassMap[record.status] ?? statusStyles.neutral
     return {
       date: dateLabel,
       clockIn: record.clockIn,
@@ -59,7 +62,9 @@ const attendanceRecords = computed(() =>
         late: 'Terlambat',
         absent: 'Tidak Hadir',
       }[record.status] ?? record.status,
-      statusClass: statusClassMap[record.status] ?? 'bg-stitch-surface-container',
+      bgClass: classes.bg,
+      textClass: classes.text,
+      borderClass: classes.border,
       dotClass: dotClassMap[record.status] ?? 'bg-stitch-outline',
       note: record.notes,
     }
@@ -151,7 +156,7 @@ onMounted(async () => {
               <h3 class="text-sm font-semibold text-stitch-on-surface">{{ record.date }}</h3>
               <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium border"
-                :class="record.statusClass"
+                :class="[record.bgClass, record.textClass, record.borderClass].join(' ')"
               >
                 {{ record.statusLabel }}
               </span>

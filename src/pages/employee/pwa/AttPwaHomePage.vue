@@ -17,11 +17,20 @@ import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useLeaveStore } from '@/stores/leaveStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useGeolocation } from '@/composables/useGeolocation'
+import { useStatusStyles } from '@/composables/useStatusStyles'
 
 const attendanceStore = useAttendanceStore()
 const leaveStore = useLeaveStore()
 const authStore = useAuthStore()
 const geo = useGeolocation()
+const statusStyles = useStatusStyles()
+
+// ── CTA button class ────────────────────────────────────────
+const ctaClass = computed(() =>
+  isClockedIn.value
+    ? 'bg-stitch-success hover:bg-stitch-success-container'
+    : 'bg-stitch-primary hover:bg-stitch-primary-container',
+)
 
 // ── Live Clock ───────────────────────────────────────────────
 const currentTime = ref('08:45:12')
@@ -138,8 +147,8 @@ async function handleClockOut(): Promise<void> {
         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border"
         :class="
           isClockedIn
-            ? 'bg-green-50 text-green-700 border-green-200'
-            : 'bg-stitch-surface-container text-stitch-on-surface-variant border-stitch-outline-variant'
+            ? [statusStyles.success.bg, statusStyles.success.text, statusStyles.success.border].join(' ')
+            : [statusStyles.neutral.bg, statusStyles.neutral.text, statusStyles.neutral.border].join(' ')
         "
       >
         <span class="mr-1.5 text-[10px]">
@@ -164,12 +173,13 @@ async function handleClockOut(): Promise<void> {
       </div>
 
       <!-- Geofence Badge -->
-      <div
-        class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 border border-green-200"
+      <span
+        class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+        :class="[statusStyles.success.bg, statusStyles.success.border].join(' ')"
       >
-        <MapPin class="w-3.5 h-3.5 text-green-600" />
-        <span class="text-xs font-semibold text-green-700">Dalam Jangkauan</span>
-      </div>
+        <MapPin class="w-3.5 h-3.5" :class="statusStyles.success.text" />
+        <span class="text-xs font-semibold" :class="statusStyles.success.text">Dalam Jangkauan</span>
+      </span>
 
       <!-- Map Placeholder -->
       <div
@@ -189,7 +199,7 @@ async function handleClockOut(): Promise<void> {
     <div class="mb-6">
       <button
         class="w-full h-14 rounded-full flex items-center justify-center gap-2 text-white font-bold text-base shadow-lg transition-transform active:scale-95"
-        :class="isClockedIn ? 'bg-green-600 hover:bg-green-700' : 'bg-stitch-primary hover:bg-stitch-primary-container'"
+        :class="ctaClass"
         @click="isClockedIn ? handleClockOut() : handleClockIn()"
       >
         <component :is="isClockedIn ? LogOut : LogIn" class="w-5 h-5" />

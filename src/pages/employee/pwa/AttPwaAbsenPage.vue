@@ -21,10 +21,12 @@ import {
 import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useGeolocation } from '@/composables/useGeolocation'
+import { useStatusStyles } from '@/composables/useStatusStyles'
 
 const attendanceStore = useAttendanceStore()
 const authStore = useAuthStore()
 const geo = useGeolocation()
+const statusStyles = useStatusStyles()
 
 // ── State ──────────────────────────────────────────────────────
 const isVerifying = ref(false)
@@ -43,10 +45,6 @@ onMounted(async () => {
     isWithinGeofence.value = true
   }
 })
-
-// ── Status color classes (semantic — Phase 2 token migration to follow) ──────
-const successClass = 'bg-green-50 text-green-700 border-green-200'
-const errorClass = 'bg-stitch-error/10 text-stitch-error'
 
 // ── Actions ──────────────────────────────────────────────────────
 async function simulateVerification(): Promise<void> {
@@ -114,11 +112,11 @@ function handleManual(): void {
         <!-- Fingerprint circle -->
         <div
           class="w-32 h-32 rounded-full flex items-center justify-center transition-all"
-          :class="isVerified ? 'bg-green-50' : 'bg-stitch-primary-container'"
+          :class="isVerified ? statusStyles.success.bg : 'bg-stitch-primary-container'"
         >
           <CheckCircle
             v-if="isVerified"
-            class="w-16 h-16 text-green-700"
+            class="w-16 h-16" :class="statusStyles.success.text"
           />
           <svg
             v-else
@@ -171,15 +169,15 @@ function handleManual(): void {
       <!-- Header -->
       <div
         class="p-3 flex items-center gap-3 border-b border-stitch-outline-variant"
-        :class="successClass"
+        :class="[statusStyles.success.bg, statusStyles.success.text, statusStyles.success.border].join(' ')"
       >
         <div
-          class="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 text-green-700"
+          class="w-10 h-10 rounded-full flex items-center justify-center bg-stitch-success-container" :class="statusStyles.success.text"
         >
           <CheckCircle class="w-5 h-5" />
         </div>
         <div>
-          <p class="text-xs font-medium text-green-700" :class="successClass">Verifikasi Berhasil</p>
+          <p class="text-xs font-medium" :class="statusStyles.success.text">Verifikasi Berhasil</p>
           <p class="text-sm font-semibold text-stitch-on-surface">{{ employeeName }}</p>
         </div>
       </div>
@@ -193,7 +191,7 @@ function handleManual(): void {
           <p class="text-[10px] uppercase tracking-wide text-stitch-on-surface-variant mb-1">Status Lokasi</p>
           <span
             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-            :class="isWithinGeofence ? 'bg-green-50 text-green-700' : 'bg-red-50 text-stitch-error'"
+            :class="isWithinGeofence ? [statusStyles.success.bg, statusStyles.success.text].join(' ') : [statusStyles.error.bg, statusStyles.error.text].join(' ')"
           >
             <MapPin class="w-3 h-3" />
             {{ isWithinGeofence ? 'Dalam Jangkauan' : 'Di Luar Jangkauan' }}
@@ -252,7 +250,7 @@ function handleManual(): void {
             <p class="text-sm text-stitch-on-surface">Clock-out attempt</p>
             <p class="text-xs text-stitch-on-surface-variant">Yesterday at 05:15 PM</p>
           </div>
-          <span class="text-xs font-medium text-green-600 flex items-center gap-1">
+          <span class="text-xs font-medium flex items-center gap-1" :class="statusStyles.success.text">
             <CheckCircle class="w-3 h-3" /> Success
           </span>
         </div>
