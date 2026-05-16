@@ -36,12 +36,12 @@ const statusClassMap: Record<string, { bg: string; text: string; border: string 
 }
 
 const dotClassMap: Record<string, string> = {
-  on_time: 'bg-stitch-primary',
-  late: 'bg-stitch-tertiary-container',
-  absent: 'bg-stitch-error',
+  on_time: 'bg-primary',
+  late: 'bg-warning',
+  absent: 'bg-destructive',
   pending: 'bg-amber-400',  // literal: pending status dot — replace after token expansion
-  approved: 'bg-stitch-success',
-  rejected: 'bg-stitch-error',
+  approved: 'bg-success',
+  rejected: 'bg-destructive',
 }
 
 const attendanceRecords = computed(() =>
@@ -66,7 +66,7 @@ const attendanceRecords = computed(() =>
       bgClass: classes.bg,
       textClass: classes.text,
       borderClass: classes.border,
-      dotClass: dotClassMap[record.status] ?? 'bg-stitch-outline',
+      dotClass: dotClassMap[record.status] ?? 'bg-border',
       note: record.notes,
     }
   }),
@@ -117,14 +117,14 @@ onMounted(async () => {
 <template>
   <AppPwaLayout>
     <template #title>
-      <span class="text-base font-semibold text-stitch-primary">Riwayat Presensi</span>
+      <span class="text-base font-semibold text-foreground">Riwayat Presensi</span>
     </template>
     <template #actions>
       <button
-        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stitch-surface-container-high transition-colors"
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/50 transition-colors"
         aria-label="Calendar filter"
       >
-        <CalendarDays class="w-5 h-5 text-stitch-primary" />
+        <CalendarDays class="w-5 h-5 text-foreground" />
       </button>
     </template>
 
@@ -154,8 +154,8 @@ onMounted(async () => {
         class="whitespace-nowrap px-4 h-11 flex items-center justify-center rounded-full text-xs font-medium transition-all active:scale-95"
         :class="
           activeFilter === f.key
-            ? 'bg-stitch-primary text-stitch-on-primary shadow-sm'
-            : 'bg-stitch-surface-container border border-stitch-outline-variant text-stitch-on-surface-variant hover:bg-stitch-surface-container-high'
+            ? 'bg-primary text-primary shadow-sm'
+            : 'bg-muted border border-border text-foreground-variant hover:bg-muted/50'
         "
         @click="handleFilterClick(f.key)"
       >
@@ -182,7 +182,7 @@ onMounted(async () => {
           <!-- Thread line -->
           <div
             v-if="idx < attendanceRecords.length - 1"
-            class="absolute left-2.5 top-8 bottom-0 w-0.5 bg-stitch-outline-variant"
+            class="absolute left-2.5 top-8 bottom-0 w-0.5 bg-border-variant"
           />
 
           <!-- Dot -->
@@ -190,13 +190,13 @@ onMounted(async () => {
             class="relative z-10 mt-1.5 h-6 w-6 rounded-full flex items-center justify-center border-2 border-white"
             :class="record.dotClass"
           >
-            <div class="h-1.5 w-1.5 rounded-full bg-white" />
+            <div class="h-1.5 w-1.5 rounded-full bg-card" />
           </div>
 
           <!-- Card -->
-          <div class="flex-1 bg-white border border-stitch-outline-variant rounded-xl p-3 shadow-sm">
+          <div class="flex-1 bg-card border border-border rounded-xl p-3 shadow-sm">
             <div class="flex justify-between items-start mb-2">
-              <h3 class="text-sm font-semibold text-stitch-on-surface">{{ record.date }}</h3>
+              <h3 class="text-sm font-semibold text-foreground">{{ record.date }}</h3>
               <span
                 class="px-2.5 py-0.5 rounded-full text-xs font-medium border"
                 :class="[record.bgClass, record.textClass, record.borderClass].join(' ')"
@@ -207,27 +207,27 @@ onMounted(async () => {
 
             <!-- Times -->
             <div class="space-y-1">
-              <div class="flex items-center gap-2 text-xs text-stitch-on-surface-variant">
+              <div class="flex items-center gap-2 text-xs text-foreground-variant">
                 <Clock class="w-3.5 h-3.5" />
                 <span>
                   Masuk:
-                  <span class="font-semibold text-stitch-on-surface">
+                  <span class="font-semibold text-foreground">
                     {{ record.clockIn ?? '—' }}
                   </span>
                 </span>
               </div>
-              <div class="flex items-center gap-2 text-xs text-stitch-on-surface-variant">
+              <div class="flex items-center gap-2 text-xs text-foreground-variant">
                 <LogOut class="w-3.5 h-3.5" />
                 <span>
                   Keluar:
-                  <span class="font-semibold text-stitch-on-surface">
+                  <span class="font-semibold text-foreground">
                     {{ record.clockOut ?? '—' }}
                   </span>
                 </span>
               </div>
               <div
                 v-if="record.note"
-                class="flex items-center gap-2 text-xs text-stitch-on-surface-variant italic"
+                class="flex items-center gap-2 text-xs text-foreground-variant italic"
               >
                 <Info class="w-3.5 h-3.5" />
                 {{ record.note }}
@@ -242,11 +242,11 @@ onMounted(async () => {
         v-else
         class="flex flex-col items-center justify-center text-center py-16"
       >
-        <div class="w-48 h-48 mb-4 rounded-2xl overflow-hidden bg-stitch-surface-container-low flex items-center justify-center">
-          <CalendarDays class="w-16 h-16 text-stitch-outline opacity-50" />
+        <div class="w-48 h-48 mb-4 rounded-2xl overflow-hidden bg-muted-low flex items-center justify-center">
+          <CalendarDays class="w-16 h-16 text-border opacity-50" />
         </div>
-        <h4 class="text-base font-semibold text-stitch-on-surface-variant">Belum ada data absensi</h4>
-        <p class="text-xs text-stitch-outline px-8 mt-1">
+        <h4 class="text-base font-semibold text-foreground-variant">Belum ada data absensi</h4>
+        <p class="text-xs text-border px-8 mt-1">
           Data riwayat untuk filter ini akan muncul di sini setelah Anda melakukan presensi.
         </p>
       </div>

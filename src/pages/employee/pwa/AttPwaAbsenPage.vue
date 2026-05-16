@@ -87,14 +87,14 @@ function handleManual(): void {
 <template>
   <AppPwaLayout>
     <template #title>
-      <span class="text-base font-semibold text-stitch-primary">Absen</span>
+      <span class="text-base font-semibold text-foreground">Absen</span>
     </template>
     <template #actions>
       <button
-        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stitch-surface-container-high transition-colors"
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/50 transition-colors"
         aria-label="Info"
       >
-        <Info class="w-5 h-5 text-stitch-primary" />
+        <Info class="w-5 h-5 text-foreground" />
       </button>
     </template>
 
@@ -103,20 +103,20 @@ function handleManual(): void {
 
     <!-- ── Scanner Section ──────────────────────────────── -->
     <section
-      class="bg-white rounded-xl border border-stitch-outline-variant shadow-sm p-4 text-center mb-4"
+      class="bg-card rounded-xl border border-border shadow-sm p-4 text-center mb-4"
     >
       <!-- Scanner Ring + Icon -->
       <div class="relative flex items-center justify-center mb-6">
         <!-- Spinning ring -->
         <div
           v-if="isVerifying"
-          class="absolute animate-spin rounded-full border-4 border-stitch-primary border-t-transparent"
+          class="absolute animate-spin rounded-full border-4 border-primary border-t-transparent"
           style="width: 140px; height: 140px;"
         />
         <!-- Fingerprint circle -->
         <div
           class="w-32 h-32 rounded-full flex items-center justify-center transition-all"
-          :class="isVerified ? statusStyles.success.bg : 'bg-stitch-primary-container'"
+          :class="isVerified ? statusStyles.success.bg : 'bg-primary/10'"
         >
           <CheckCircle
             v-if="isVerified"
@@ -124,7 +124,7 @@ function handleManual(): void {
           />
           <svg
             v-else
-            class="w-16 h-16 text-stitch-primary"
+            class="w-16 h-16 text-foreground"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -135,17 +135,17 @@ function handleManual(): void {
         </div>
       </div>
 
-      <h2 class="text-base font-semibold text-stitch-on-surface mb-1">
+      <h2 class="text-base font-semibold text-foreground mb-1">
         {{ isVerified ? 'Verifikasi Berhasil' : 'Letakkan jari pada sensor' }}
       </h2>
-      <p class="text-sm italic text-stitch-on-surface-variant">
+      <p class="text-sm italic text-foreground-variant">
         {{ isVerified ? employeeName : isVerifying ? 'Memverifikasi...' : 'Menunggu verifikasi...' }}
       </p>
 
       <!-- Error Banner -->
       <div
         v-if="verifyError"
-        class="mt-3 flex items-center justify-center gap-2 text-stitch-error text-sm"
+        class="mt-3 flex items-center justify-center gap-2 text-destructive text-sm"
       >
         <AlertCircle class="w-4 h-4" />
         <span>{{ verifyError }}</span>
@@ -158,7 +158,7 @@ function handleManual(): void {
       <!-- Trigger (auto on mount or tap) -->
       <button
         v-if="!isVerified && !isVerifying"
-        class="mt-4 mx-auto text-xs text-stitch-primary underline"
+        class="mt-4 mx-auto text-xs text-foreground underline"
         @click="simulateVerification"
       >
         Tap to simulate scan
@@ -168,31 +168,31 @@ function handleManual(): void {
     <!-- ── Verification Result Card ────────────────────── -->
     <section
       v-if="isVerified"
-      class="bg-white rounded-xl border border-stitch-outline-variant shadow-sm overflow-hidden mb-4"
+      class="bg-card rounded-xl border border-border shadow-sm overflow-hidden mb-4"
     >
       <!-- Header -->
       <div
-        class="p-3 flex items-center gap-3 border-b border-stitch-outline-variant"
+        class="p-3 flex items-center gap-3 border-b border-border"
         :class="[statusStyles.success.bg, statusStyles.success.text, statusStyles.success.border].join(' ')"
       >
         <div
-          class="w-10 h-10 rounded-full flex items-center justify-center bg-stitch-success-container" :class="statusStyles.success.text"
+          class="w-10 h-10 rounded-full flex items-center justify-center bg-success/10" :class="statusStyles.success.text"
         >
           <CheckCircle class="w-5 h-5" />
         </div>
         <div>
           <p class="text-xs font-medium" :class="statusStyles.success.text">Verifikasi Berhasil</p>
-          <p class="text-sm font-semibold text-stitch-on-surface">{{ employeeName }}</p>
+          <p class="text-sm font-semibold text-foreground">{{ employeeName }}</p>
         </div>
       </div>
       <!-- Stats -->
       <div class="p-3 grid grid-cols-2 gap-3">
         <div>
-          <p class="text-[10px] uppercase tracking-wide text-stitch-on-surface-variant mb-0.5">Waktu Terdeteksi</p>
-          <p class="text-base font-semibold text-stitch-primary">{{ verifyTime }}</p>
+          <p class="text-[10px] uppercase tracking-wide text-foreground-variant mb-0.5">Waktu Terdeteksi</p>
+          <p class="text-base font-semibold text-foreground">{{ verifyTime }}</p>
         </div>
         <div class="flex flex-col items-end">
-          <p class="text-[10px] uppercase tracking-wide text-stitch-on-surface-variant mb-1">Status Lokasi</p>
+          <p class="text-[10px] uppercase tracking-wide text-foreground-variant mb-1">Status Lokasi</p>
           <span
             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
             :class="isWithinGeofence ? [statusStyles.success.bg, statusStyles.success.text].join(' ') : [statusStyles.error.bg, statusStyles.error.text].join(' ')"
@@ -206,53 +206,53 @@ function handleManual(): void {
 
     <!-- ── Fallback Actions ────────────────────────────── -->
     <section class="text-center space-y-3 mb-6">
-      <p class="text-xs font-medium text-stitch-on-surface-variant">atau gunakan cara lain</p>
+      <p class="text-xs font-medium text-foreground-variant">atau gunakan cara lain</p>
       <div class="flex gap-3 justify-center">
         <button
-          class="flex-1 min-h-[44px] flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
+          class="flex-1 min-h-[44px] flex items-center justify-center gap-2 border border-border text-foreground rounded-full text-xs font-medium hover:bg-muted transition-colors"
           @click="handleFaceId"
         >
           <Fingerprint class="w-4 h-4" />
           Face ID
         </button>
         <button
-          class="flex-1 min-h-[44px] flex items-center justify-center gap-2 border border-stitch-outline text-stitch-primary rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-colors"
+          class="flex-1 min-h-[44px] flex items-center justify-center gap-2 border border-border text-foreground rounded-full text-xs font-medium hover:bg-muted transition-colors"
           @click="handleManual"
         >
           <Keyboard class="w-4 h-4" />
           Manual
         </button>
       </div>
-      <button class="inline-block text-xs text-stitch-primary underline py-1 min-h-[44px]">
+      <button class="inline-block text-xs text-foreground underline py-1 min-h-[44px]">
         Laporkan Masalah
       </button>
     </section>
 
     <!-- ── Recent Activity ─────────────────────────────── -->
     <section class="space-y-3">
-      <h3 class="text-base font-semibold text-stitch-on-surface">Recent Activity</h3>
+      <h3 class="text-base font-semibold text-foreground">Recent Activity</h3>
       <div class="space-y-2">
         <!-- Failed attempt -->
-        <div class="flex items-center gap-3 p-3 bg-stitch-surface-container-low rounded-lg border border-stitch-outline-variant">
-          <div class="w-8 h-8 rounded-full bg-stitch-surface-variant flex items-center justify-center">
-            <History class="w-4 h-4 text-stitch-on-surface-variant" />
+        <div class="flex items-center gap-3 p-3 bg-muted rounded-lg border border-border">
+          <div class="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+            <History class="w-4 h-4 text-foreground-variant" />
           </div>
           <div class="flex-1">
-            <p class="text-sm text-stitch-on-surface">Clock-in attempt</p>
-            <p class="text-xs text-stitch-on-surface-variant">Today at 08:30 AM</p>
+            <p class="text-sm text-foreground">Clock-in attempt</p>
+            <p class="text-xs text-foreground-variant">Today at 08:30 AM</p>
           </div>
-          <span class="text-xs font-medium text-stitch-error flex items-center gap-1">
+          <span class="text-xs font-medium text-destructive flex items-center gap-1">
             <AlertCircle class="w-3 h-3" /> Failed
           </span>
         </div>
         <!-- Success -->
-        <div class="flex items-center gap-3 p-3 bg-stitch-surface-container-low rounded-lg border border-stitch-outline-variant">
-          <div class="w-8 h-8 rounded-full bg-stitch-surface-variant flex items-center justify-center">
-            <History class="w-4 h-4 text-stitch-on-surface-variant" />
+        <div class="flex items-center gap-3 p-3 bg-muted rounded-lg border border-border">
+          <div class="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+            <History class="w-4 h-4 text-foreground-variant" />
           </div>
           <div class="flex-1">
-            <p class="text-sm text-stitch-on-surface">Clock-out attempt</p>
-            <p class="text-xs text-stitch-on-surface-variant">Yesterday at 05:15 PM</p>
+            <p class="text-sm text-foreground">Clock-out attempt</p>
+            <p class="text-xs text-foreground-variant">Yesterday at 05:15 PM</p>
           </div>
           <span class="text-xs font-medium flex items-center gap-1" :class="statusStyles.success.text">
             <CheckCircle class="w-3 h-3" /> Success
