@@ -78,12 +78,11 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'
-import { authApi } from '@/services/api/authApi'
+import { useAuth } from '@/composables/useAuth'
 import { Input } from '@/components/ui/input'
 
 const router = useRouter()
-const authStore = useAuthStore()
+const { login, isAdmin } = useAuth()
 
 const email = ref('')
 const password = ref('')
@@ -126,16 +125,12 @@ async function handleLogin(): Promise<void> {
 
   isSubmitting.value = true
   try {
-    const response = await authApi.login({ email: email.value, password: password.value })
-    if (response.success) {
-      authStore.setAuth('', {
-        ...response.data.user,
-        phone: response.data.user.phone ?? null,
-      })
-      const redirect = authStore.isAdmin ? '/admin' : '/'
+    const result = await login(email.value, password.value)
+    if (result.success) {
+      const redirect = isAdmin.value ? '/admin' : '/'
       router.push(redirect)
     } else {
-      submitError.value = response.message ?? 'Login failed. Please try again.'
+      submitError.value = result.message ?? 'Login failed. Please try again.'
     }
   } catch (err: unknown) {
     const error = err as { response?: { data?: { message?: string } } }

@@ -5,19 +5,12 @@ import { useAuthStore } from '@/stores/authStore'
 const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost/api/v1',
   timeout: 10000,
+  withCredentials: true, // Laravel Sanctum cookie-based auth
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
 })
-
-apiClient.interceptors.request.use((config) => {
-  const authStore = useAuthStore()
-  if (authStore.token) {
-    config.headers.Authorization = `Bearer ${authStore.token}`
-  }
-  return config
-}, (error) => Promise.reject(error))
 
 apiClient.interceptors.response.use(
   (response) => response,
@@ -25,7 +18,13 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       const authStore = useAuthStore()
       authStore.clearAuth()
-      window.location.href = '/auth/login'
+      // SPA-safe redirect — avoids full page reload
+      const router = (window as unknown as { __vueRouter?: { push: (path: string) => void } }).__vueRouter
+      if (router) {
+        router.push('/auth/login')
+      } else {
+        window.location.href = '/auth/login'
+      }
     }
     return Promise.reject(error)
   },

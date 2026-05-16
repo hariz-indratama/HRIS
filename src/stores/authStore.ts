@@ -11,6 +11,14 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdmin = computed(() => user.value?.role === 'admin')
   const isEmployee = computed(() => user.value?.role === 'employee')
 
+  /**
+   * Sets authenticated user state.
+   *
+   * Note: This app uses Laravel Sanctum cookie-based auth (stateful).
+   * The token parameter is stored as a session flag in localStorage only —
+   * it is NOT sent as a Bearer token. Sanctum manages the session cookie server-side.
+   * The empty-string token passed from useAuth/login is intentional.
+   */
   function setAuth(newToken: string, newUser: User): void {
     token.value = newToken
     user.value = newUser
