@@ -48,9 +48,10 @@ function goBack(): void {
       class="fixed top-0 left-0 right-0 z-50 h-16 bg-card border-b border-border
              flex items-center justify-between px-4 shadow-sm pt-[env(safe-area-inset-top)]"
     >
-      <!-- Left: Back button slot -->
+      <!-- Left: Back button — only show on non-home routes -->
       <div class="w-10">
         <button
+          v-if="route.path !== '/pwa/home'"
           class="w-10 h-10 flex items-center justify-center rounded-full
                  hover:bg-muted/50 transition-colors"
           aria-label="Go back"
@@ -92,7 +93,7 @@ function goBack(): void {
         v-for="item in navItems"
         :key="item.name"
         :to="item.to"
-        class="flex flex-col items-center justify-center px-4 py-1 transition-colors duration-150"
+        class="flex flex-col items-center justify-center px-4 py-2.5 min-h-[44px] min-w-[44px] transition-colors duration-150"
         :class="[
           isActive(item.name)
             ? 'bg-primary/10 text-primary rounded-full'
