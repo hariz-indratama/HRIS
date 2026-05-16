@@ -31,8 +31,8 @@ const hasError = computed(() => attendanceStore.error !== null)
 // ── CTA button class ────────────────────────────────────────
 const ctaClass = computed(() =>
   isClockedIn.value
-    ? 'bg-stitch-success hover:bg-stitch-success-container'
-    : 'bg-stitch-primary hover:bg-stitch-primary-container',
+    ? 'bg-success hover:bg-success/80'
+    : 'bg-primary hover:bg-primary/90',
 )
 
 // ── Live Clock ───────────────────────────────────────────────
@@ -118,7 +118,7 @@ async function handleClockOut(): Promise<void> {
 <template>
   <AppPwaLayout>
     <template #title>
-      <span class="text-base font-semibold text-stitch-primary font-sans">Attendance Pro</span>
+      <span class="text-base font-semibold text-foreground font-sans">Attendance Pro</span>
     </template>
 
     <!-- ── Loading skeletons ──────────────────────────── -->
@@ -156,17 +156,17 @@ async function handleClockOut(): Promise<void> {
     <!-- ── Greeting ──────────────────────────────────────── -->
     <div class="flex justify-between items-start mb-4">
       <div>
-        <h1 class="text-xl font-semibold text-stitch-primary leading-tight">
+        <h1 class="text-xl font-semibold text-foreground leading-tight">
           Selamat Pagi
         </h1>
-        <p class="text-sm font-medium text-stitch-secondary mt-0.5">
+        <p class="text-sm font-medium text-muted-foreground mt-0.5">
           {{ authStore.user?.name ?? 'Karyawan' }}
         </p>
       </div>
 
       <!-- Avatar -->
       <div
-        class="h-12 w-12 rounded-full overflow-hidden border-2 border-stitch-outline-variant bg-stitch-surface-container"
+        class="h-12 w-12 rounded-full overflow-hidden border-2 border-border bg-muted"
       >
         <img
           alt="Employee avatar"
@@ -195,14 +195,14 @@ async function handleClockOut(): Promise<void> {
 
     <!-- ── Clock Hero Card ─────────────────────────────── -->
     <section
-      class="bg-white rounded-xl p-4 shadow-sm border border-stitch-outline-variant mb-4 text-center flex flex-col items-center"
+      class="bg-card rounded-xl p-4 shadow-sm border border-border mb-4 text-center flex flex-col items-center"
     >
       <!-- Time + Date -->
       <div class="mb-3">
-        <p class="text-[48px] font-bold tracking-tight text-stitch-primary leading-none">
+        <p class="text-[48px] font-bold tracking-tight text-foreground leading-none">
           {{ currentTime }}
         </p>
-        <p class="text-sm text-stitch-secondary mt-1">
+        <p class="text-sm text-muted-foreground mt-1">
           {{ currentDate }}
         </p>
       </div>
@@ -218,11 +218,11 @@ async function handleClockOut(): Promise<void> {
 
       <!-- Map Placeholder -->
       <div
-        class="mt-4 w-full h-28 rounded-lg overflow-hidden bg-stitch-surface-variant relative"
+        class="mt-4 w-full h-28 rounded-lg overflow-hidden bg-muted relative"
       >
         <div class="absolute inset-0 flex items-center justify-center">
           <div
-            class="h-8 w-8 bg-stitch-primary rounded-full flex items-center justify-center border-4 border-white shadow-lg"
+            class="h-8 w-8 bg-primary rounded-full flex items-center justify-center border-4 border-white shadow-lg"
           >
             <MapPin class="w-3.5 h-3.5 text-white" />
           </div>
@@ -244,32 +244,32 @@ async function handleClockOut(): Promise<void> {
 
     <!-- ── Monthly Summary ──────────────────────────────── -->
     <section>
-      <h3 class="text-xs font-medium text-stitch-secondary mb-3 px-1 uppercase tracking-wider">
+      <h3 class="text-xs font-medium text-muted-foreground mb-3 px-1 uppercase tracking-wider">
         Ringkasan Bulan Ini
       </h3>
       <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
         <!-- Hadir -->
         <div
-          class="flex-shrink-0 px-4 py-3 rounded-xl bg-stitch-surface-container-high border border-stitch-outline-variant flex flex-col gap-1 min-w-[110px]"
+          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted-high border border-border flex flex-col gap-1 min-w-[110px]"
         >
-          <span class="text-xs text-stitch-secondary">Hadir</span>
-          <span class="text-lg font-semibold text-stitch-primary">{{ attendanceStore.attendanceHistory.length }}</span>
+          <span class="text-xs text-muted-foreground">Hadir</span>
+          <span class="text-lg font-semibold text-foreground">{{ attendanceStore.attendanceHistory.length }}</span>
         </div>
         <!-- Terlambat -->
         <div
-          class="flex-shrink-0 px-4 py-3 rounded-xl bg-stitch-surface-container-high border border-stitch-outline-variant flex flex-col gap-1 min-w-[110px]"
+          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted-high border border-border flex flex-col gap-1 min-w-[110px]"
         >
-          <span class="text-xs text-stitch-secondary">Terlambat</span>
-          <span class="text-lg font-semibold text-stitch-tertiary-container">
+          <span class="text-xs text-muted-foreground">Terlambat</span>
+          <span class="text-lg font-semibold text-warning">
           {{ attendanceStore.attendanceHistory.filter(r => r.status === 'late').length }}
         </span>
         </div>
         <!-- Izin -->
         <div
-          class="flex-shrink-0 px-4 py-3 rounded-xl bg-stitch-surface-container-high border border-stitch-outline-variant flex flex-col gap-1 min-w-[110px]"
+          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted-high border border-border flex flex-col gap-1 min-w-[110px]"
         >
-          <span class="text-xs text-stitch-secondary">Izin</span>
-          <span class="text-lg font-semibold text-stitch-secondary">{{ leaveStore.pendingCount }}</span>
+          <span class="text-xs text-muted-foreground">Izin</span>
+          <span class="text-lg font-semibold text-muted-foreground">{{ leaveStore.pendingCount }}</span>
         </div>
       </div>
     </section>
