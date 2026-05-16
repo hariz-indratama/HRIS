@@ -1,0 +1,128 @@
+name: API — Laravel CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'api/**'
+      - '.github/workflows/api-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'api/**'
+      - '.github/workflows/api-ci.yml'
+
+concurrency:
+  group: api-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, zip, pdo, mbstring, pdo_mysql, bcmath
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+            api/vendor
+          key: php-composer-${{ runner.os }}-${{ hashFiles('api/composer.lock') }}
+          restore-keys: |
+            php-composer-${{ runner.os }}-
+
+      - name: Install Dependencies
+        working-directory: api
+        run: composer install --prefer-dist --no-progress
+
+      - name: Laravel Pint (Code Style)
+        working-directory: api
+        run: ./vendor/bin/pint --test
+
+  typecheck:
+    name: PHPStan Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, zip, pdo, mbstring, bcmath
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: api/vendor
+          key: php-composer-${{ runner.os }}-${{ hashFiles('api/composer.lock') }}
+
+      - name: Install Dependencies
+        working-directory: api
+        run: composer install --prefer-dist --no-progress
+
+      - name: PHPStan
+        working-directory: api
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M
+
+  test:
+    name: PHPUnit Tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: hris_testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, curl, zip, pdo, mbstring, bcmath
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: api/vendor
+          key: php-composer-${{ runner.os }}-${{ hashFiles('api/composer.lock') }}
+
+      - name: Install Dependencies
+        working-directory: api
+        run: composer install --prefer-dist --no-progress
+
+      - name: Setup Env
+        working-directory: api
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          mysql -u root -e "CREATE DATABASE IF NOT EXISTS hris_testing"
+
+      - name: Run Migrations
+        working-directory: api
+        run: php artisan migrate --force
+
+      - name: PHPUnit
+        working-directory: api
+        run: ./vendor/bin/phpunit --testdox
