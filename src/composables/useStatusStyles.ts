@@ -28,36 +28,36 @@ export function useStatusStyles() {
      * Success / approved / on-time status.
      */
     success: {
-      bg: 'bg-green-50',
-      text: 'text-green-700',
-      border: 'border-green-200',
+      bg: 'bg-success/10',
+      text: 'text-success',
+      border: 'border-success/20',
     },
 
     /**
      * Error / rejected / failed status.
      */
     error: {
-      bg: 'bg-stitch-error/10',
-      text: 'text-stitch-error',
-      border: 'border-stitch-error/20',
+      bg: 'bg-destructive/10',
+      text: 'text-destructive',
+      border: 'border-destructive/20',
     },
 
     /**
      * Warning / pending / caution status.
      */
     warning: {
-      bg: 'bg-amber-50',
-      text: 'text-amber-700',
-      border: 'border-amber-200',
+      bg: 'bg-warning/10',
+      text: 'text-warning',
+      border: 'border-warning/20',
     },
 
     /**
      * Neutral / informational status.
      */
     neutral: {
-      bg: 'bg-stitch-surface-container',
-      text: 'text-stitch-secondary',
-      border: 'border-stitch-outline-variant',
+      bg: 'bg-muted',
+      text: 'text-muted-foreground',
+      border: 'border-border',
     },
   }
 }
