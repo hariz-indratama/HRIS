@@ -31,7 +31,7 @@ const permissionTypes = [
 ]
 
 async function handleSubmit(): Promise<void> {
-  alert('Pengajuan Izin dikirim!')
+  toast.error('Pengajuan Izin dikirim!')
   router.push('/pwa/pengajuan')
 }
 </script>

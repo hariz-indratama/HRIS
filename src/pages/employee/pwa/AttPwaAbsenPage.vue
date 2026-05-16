@@ -22,12 +22,14 @@ import { useAttendanceStore } from '@/stores/attendanceStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import { useStatusStyles } from '@/composables/useStatusStyles'
+import { useToast } from '@/composables/useToast'
 import SkeletonCard from '@/components/shared/SkeletonCard.vue'
 
 const attendanceStore = useAttendanceStore()
 const authStore = useAuthStore()
 const geo = useGeolocation()
 const statusStyles = useStatusStyles()
+const toast = useToast()
 
 // ── State ──────────────────────────────────────────────────────
 const isVerifying = ref(false)
@@ -76,11 +78,11 @@ function retry(): void {
 }
 
 function handleFaceId(): void {
-  alert('Face ID: Coming soon!')
+  toast.error('Face ID: Coming soon!')
 }
 
 function handleManual(): void {
-  alert('Manual entry: Coming soon!')
+  toast.error('Manual entry: Coming soon!')
 }
 </script>
 

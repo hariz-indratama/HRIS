@@ -36,7 +36,7 @@ const duration = computed(() => {
 
 async function handleSubmit(): Promise<void> {
   // TODO: Wire up API
-  alert('Pengajuan Lembur dikirim!')
+  toast.error('Pengajuan Lembur dikirim!')
   router.push('/pwa/pengajuan')
 }
 </script>

@@ -18,6 +18,7 @@ import { useLeaveStore } from '@/stores/leaveStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import { useStatusStyles } from '@/composables/useStatusStyles'
+import { useToast } from '@/composables/useToast'
 import SkeletonCard from '@/components/shared/SkeletonCard.vue'
 
 const attendanceStore = useAttendanceStore()
@@ -25,6 +26,7 @@ const leaveStore = useLeaveStore()
 const authStore = useAuthStore()
 const geo = useGeolocation()
 const statusStyles = useStatusStyles()
+const toast = useToast()
 
 const hasError = computed(() => attendanceStore.error !== null)
 
@@ -95,7 +97,7 @@ async function handleClockIn(): Promise<void> {
     await attendanceStore.clockIn(latitude, longitude, deviceId)
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Gagal clock-in'
-    alert(msg)
+    toast.error(msg)
   }
 }
 
@@ -110,7 +112,7 @@ async function handleClockOut(): Promise<void> {
     )
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Gagal clock-out'
-    alert(msg)
+    toast.error(msg)
   }
 }
 </script>
@@ -250,14 +252,14 @@ async function handleClockOut(): Promise<void> {
       <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
         <!-- Hadir -->
         <div
-          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted-high border border-border flex flex-col gap-1 min-w-[110px]"
+          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted border border-border flex flex-col gap-1 min-w-[110px]"
         >
           <span class="text-xs text-muted-foreground">Hadir</span>
           <span class="text-lg font-semibold text-foreground">{{ attendanceStore.attendanceHistory.length }}</span>
         </div>
         <!-- Terlambat -->
         <div
-          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted-high border border-border flex flex-col gap-1 min-w-[110px]"
+          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted border border-border flex flex-col gap-1 min-w-[110px]"
         >
           <span class="text-xs text-muted-foreground">Terlambat</span>
           <span class="text-lg font-semibold text-warning">
@@ -266,7 +268,7 @@ async function handleClockOut(): Promise<void> {
         </div>
         <!-- Izin -->
         <div
-          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted-high border border-border flex flex-col gap-1 min-w-[110px]"
+          class="flex-shrink-0 px-4 py-3 rounded-xl bg-muted border border-border flex flex-col gap-1 min-w-[110px]"
         >
           <span class="text-xs text-muted-foreground">Izin</span>
           <span class="text-lg font-semibold text-muted-foreground">{{ leaveStore.pendingCount }}</span>

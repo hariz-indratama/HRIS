@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { LeaveRequest } from '@/types/models/LeaveRequest'
 import { leaveApi } from '@/services/api/leaveApi'
+import { extractApiError } from '@/lib/utils'
 import type {
   LeaveBalanceResponse,
   OvertimeResponse,
@@ -100,7 +101,7 @@ export const useLeaveStore = defineStore('leave', () => {
     } catch (err: unknown) {
       submitStatus.value = 'error'
       submitError.value =
-        err instanceof Error ? err.message : 'Gagal mengirim pengajuan'
+        extractApiError(err)
       return false
     }
     // NOTE: Caller is responsible for calling resetSubmitStatus() after the

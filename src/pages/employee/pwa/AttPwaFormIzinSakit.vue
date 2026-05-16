@@ -35,10 +35,10 @@ const certRequired = computed(() => needsCert.value)
 
 async function handleSubmit(): Promise<void> {
   if (certRequired.value && !doctorCertUploaded.value) {
-    alert('Surat dokter wajib untuk izin lebih dari 2 hari.')
+    toast.error('Surat dokter wajib untuk izin lebih dari 2 hari.')
     return
   }
-  alert('Pengajuan Izin Sakit dikirim!')
+  toast.error('Pengajuan Izin Sakit dikirim!')
   router.push('/pwa/pengajuan')
 }
 </script>

@@ -42,11 +42,11 @@
     <!-- History List -->
     <div
       v-if="isLoading"
-      class="text-center py-12"
+      class="space-y-3"
     >
-      <p class="text-muted-foreground">
-        Loading...
-      </p>
+      <SkeletonCard :lines="3" />
+      <SkeletonCard :lines="2" />
+      <SkeletonCard :lines="4" />
     </div>
     <div
       v-else-if="attendanceStore.attendanceHistory.length === 0"
@@ -96,8 +96,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAttendanceStore } from '@/stores/attendanceStore'
+import SkeletonCard from '@/components/shared/SkeletonCard.vue'
+import { useDateFormat } from '@/composables/useDateFormat'
 
 const attendanceStore = useAttendanceStore()
+const { formatDate, formatTime } = useDateFormat()
 const isLoading = ref(false)
 
 const now = new Date()
@@ -120,24 +123,6 @@ const months = [
 ]
 
 const years = Array.from({ length: 5 }, (_, i) => now.getFullYear() - i)
-
-function formatDate(iso: string | null): string {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', {
-    weekday: 'short',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-function formatTime(iso: string | null): string {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 function statusBadgeClass(status: string): Record<string, boolean> {
   return {

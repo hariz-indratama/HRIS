@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterView } from 'vue-router'
+import { Sonner } from '@/components/ui/sonner'
+
+defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
-  <HelloWorld />
+  <RouterView />
+  <Sonner />
 </template>

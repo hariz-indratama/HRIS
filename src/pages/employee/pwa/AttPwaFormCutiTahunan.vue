@@ -38,12 +38,12 @@ function decrementDays(): void {
 
 async function handleSubmit(): Promise<void> {
   // TODO: Wire up API
-  alert('Pengajuan Cuti Tahunan dikirim!')
+  toast.error('Pengajuan Cuti Tahunan dikirim!')
   router.push('/pwa/pengajuan')
 }
 
 function handleSaveDraft(): void {
-  alert('Draft disimpan!')
+  toast.error('Draft disimpan!')
 }
 </script>
 

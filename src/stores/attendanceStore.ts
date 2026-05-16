@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Attendance } from '@/types/models/Attendance'
 import { attendanceApi } from '@/services/api/attendanceApi'
+import { extractApiError } from '@/lib/utils'
 
 export const useAttendanceStore = defineStore('attendance', () => {
   const todayAttendance = ref<Attendance | null>(null)
@@ -17,7 +18,7 @@ export const useAttendanceStore = defineStore('attendance', () => {
       const response = await attendanceApi.getToday()
       todayAttendance.value = response.data
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Gagal mengambil data absensi'
+      error.value = extractApiError(err)
       todayAttendance.value = null
     } finally {
       isLoading.value = false
@@ -37,7 +38,7 @@ export const useAttendanceStore = defineStore('attendance', () => {
       const response = await attendanceApi.getHistory(params)
       attendanceHistory.value = response.data
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Gagal mengambil riwayat'
+      error.value = extractApiError(err)
       attendanceHistory.value = []
     } finally {
       isLoading.value = false
@@ -52,7 +53,7 @@ export const useAttendanceStore = defineStore('attendance', () => {
       todayAttendance.value = response.data
       return true
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Clock-in gagal'
+      error.value = extractApiError(err)
       return false
     } finally {
       isLoading.value = false
@@ -72,7 +73,7 @@ export const useAttendanceStore = defineStore('attendance', () => {
       todayAttendance.value = null
       return true
     } catch (err: unknown) {
-      error.value = err instanceof Error ? err.message : 'Clock-out gagal'
+      error.value = extractApiError(err)
       return false
     } finally {
       isLoading.value = false
