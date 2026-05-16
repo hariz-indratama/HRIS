@@ -4,7 +4,7 @@
  *
  * Mobile-first PWA shell layout for the Employee Attendance PWA.
  * Provides a fixed top app bar, scrollable content slot, and fixed bottom navigation bar.
- * Uses Stitch design tokens (stitch-* Tailwind classes).
+ * Uses Shadcn semantic design tokens.
  *
  * @packageDocumentation
  */
@@ -42,29 +42,28 @@ function goBack(): void {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen bg-stitch-surface overflow-hidden">
+  <div class="flex flex-col h-screen bg-background overflow-hidden">
     <!-- ── Top App Bar ─────────────────────────────────────────── -->
     <header
-      class="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-stitch-outline-variant
-             flex items-center justify-between px-4 shadow-sm"
-      :style="{ paddingTop: 'env(safe-area-inset-top)' }"
+      class="fixed top-0 left-0 right-0 z-50 h-16 bg-card border-b border-border
+             flex items-center justify-between px-4 shadow-sm pt-[env(safe-area-inset-top)]"
     >
       <!-- Left: Back button slot -->
       <div class="w-10">
         <button
           class="w-10 h-10 flex items-center justify-center rounded-full
-                 hover:bg-stitch-surface-container-high transition-colors"
+                 hover:bg-muted/50 transition-colors"
           aria-label="Go back"
           @click="goBack"
         >
-          <ArrowLeft class="w-5 h-5 text-stitch-primary" />
+          <ArrowLeft class="w-5 h-5 text-foreground" />
         </button>
       </div>
 
       <!-- Center: Page title slot -->
       <div class="flex-1 text-center">
         <slot name="title">
-          <span class="text-base font-semibold text-stitch-primary font-sans">
+          <span class="text-base font-semibold text-foreground font-sans">
             Attendance Pro
           </span>
         </slot>
@@ -78,21 +77,16 @@ function goBack(): void {
 
     <!-- ── Page Content ───────────────────────────────────────── -->
     <main
-      class="flex-1 overflow-y-auto pt-16 px-4"
-      :style="{ paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))' }"
+      class="flex-1 overflow-y-auto pt-16 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))]"
     >
       <slot />
     </main>
 
     <!-- ── Bottom Navigation Bar ──────────────────────────────── -->
     <nav
-      class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-stitch-outline-variant
-             shadow-lg flex justify-around items-center px-4"
-      :style="{
-        paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))',
-        paddingTop: 'env(safe-area-inset-top)',
-        borderRadius: '1rem 1rem 0 0',
-      }"
+      class="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border
+             shadow-lg flex justify-around items-center px-4 pt-[env(safe-area-inset-top)]
+             pb-[calc(0.5rem+env(safe-area-inset-bottom))] rounded-t-xl"
     >
       <RouterLink
         v-for="item in navItems"
@@ -101,8 +95,8 @@ function goBack(): void {
         class="flex flex-col items-center justify-center px-4 py-1 transition-colors duration-150"
         :class="[
           isActive(item.name)
-            ? 'bg-stitch-primary-container text-stitch-on-primary-container rounded-full'
-            : 'text-stitch-on-surface-variant hover:bg-stitch-surface-container transition-colors'
+            ? 'bg-primary/10 text-primary rounded-full'
+            : 'text-muted-foreground hover:bg-muted transition-colors'
         ]"
       >
         <component
