@@ -22,9 +22,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        name: 'dashboard',
-        component: () => import('@/pages/employee/DashboardPage.vue'),
-        meta: { role: 'employee' },
+        redirect: '/pwa/home',
       },
       {
         path: 'history',
