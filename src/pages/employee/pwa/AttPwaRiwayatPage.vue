@@ -39,7 +39,7 @@ const dotClassMap: Record<string, string> = {
   on_time: 'bg-primary',
   late: 'bg-warning',
   absent: 'bg-destructive',
-  pending: 'bg-amber-400',  // literal: pending status dot — replace after token expansion
+  pending: 'bg-warning',
   approved: 'bg-success',
   rejected: 'bg-destructive',
 }

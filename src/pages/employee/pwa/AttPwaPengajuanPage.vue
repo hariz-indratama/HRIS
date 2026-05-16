@@ -86,8 +86,8 @@ const requestTypes = [
     icon: Palmtree,
     title: "Cuti Tahunan",
     subtitle: "Cuti reguler & besar",
-    containerClass: "bg-stitch-secondary-container text-stitch-primary border-stitch-outline-variant",
-    iconClass: "bg-stitch-secondary-container text-stitch-primary",
+    containerClass: "bg-primary/10 text-foreground border-border",
+    iconClass: "bg-primary/10 text-foreground",
     to: "/pwa/pengajuan/cuti",
   },
   {
@@ -138,16 +138,16 @@ function statusStyle(
 <template>
   <AppPwaLayout>
     <template #title>
-      <span class="text-base font-semibold text-stitch-primary">Pengajuan</span>
+      <span class="text-base font-semibold text-foreground">Pengajuan</span>
     </template>
     <template #actions>
       <button
-        class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-stitch-surface-container-high transition-colors"
+        class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/50 transition-colors"
         aria-label="Notifications"
       >
-        <Bell class="w-5 h-5 text-stitch-primary" />
+        <Bell class="w-5 h-5 text-foreground" />
         <span
-          class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-stitch-error"
+          class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive"
         />
       </button>
     </template>
@@ -157,7 +157,7 @@ function statusStyle(
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="bg-white rounded-xl border p-3 shadow-sm flex items-center gap-2.5"
+        class="bg-card rounded-xl border p-3 shadow-sm flex items-center gap-2.5"
         :class="stat.containerClass"
       >
         <div
@@ -168,12 +168,12 @@ function statusStyle(
         </div>
         <div>
           <p
-            class="text-[10px] uppercase tracking-wide text-stitch-on-surface-variant"
+            class="text-[10px] uppercase tracking-wide text-muted-foreground"
           >
             {{ stat.label }}
           </p>
           <p
-            class="text-sm font-bold text-stitch-on-surface leading-none mt-0.5"
+            class="text-sm font-bold text-foreground leading-none mt-0.5"
           >
             {{ stat.value }}
           </p>
@@ -187,7 +187,7 @@ function statusStyle(
         v-for="card in requestTypes"
         :key="card.title"
         :to="card.to"
-        class="bg-white rounded-xl border border-stitch-outline-variant shadow-sm p-3 flex items-start gap-2.5 hover:shadow-md transition-shadow"
+        class="bg-card rounded-xl border border-border shadow-sm p-3 flex items-start gap-2.5 hover:shadow-md transition-shadow"
       >
         <div
           class="w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0"
@@ -196,31 +196,31 @@ function statusStyle(
           <component :is="card.icon" class="w-5 h-5" />
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-xs font-semibold text-stitch-on-surface leading-tight">
+          <p class="text-xs font-semibold text-foreground leading-tight">
             {{ card.title }}
           </p>
           <p
-            class="text-[10px] text-stitch-on-surface-variant mt-0.5 leading-tight"
+            class="text-[10px] text-muted-foreground mt-0.5 leading-tight"
           >
             {{ card.subtitle }}
           </p>
         </div>
-        <ChevronRight class="w-4 h-4 text-stitch-outline flex-shrink-0 mt-1" />
+        <ChevronRight class="w-4 h-4 text-muted flex-shrink-0 mt-1" />
       </RouterLink>
     </section>
 
     <!-- ── Recent Requests ────────────────────────────── -->
     <section>
       <div class="flex justify-between items-center mb-2 px-1">
-        <h3 class="text-sm font-semibold text-stitch-on-surface">
+        <h3 class="text-sm font-semibold text-foreground">
           Pengajuan Terkini
         </h3>
-        <button class="text-xs text-stitch-primary font-medium">
+        <button class="text-xs text-foreground font-medium">
           Lihat Semua
         </button>
       </div>
       <div
-        class="bg-white rounded-xl border border-stitch-outline-variant shadow-sm overflow-hidden divide-y divide-stitch-outline-variant"
+        class="bg-card rounded-xl border border-border shadow-sm overflow-hidden divide-y divide-border"
       >
         <div
           v-for="req in recentRequests"
@@ -228,10 +228,10 @@ function statusStyle(
           class="flex items-center gap-3 p-3"
         >
           <div class="flex-1">
-            <p class="text-sm font-medium text-stitch-on-surface">
+            <p class="text-sm font-medium text-foreground">
               {{ req.type }}
             </p>
-            <p class="text-xs text-stitch-on-surface-variant">{{ req.date }}</p>
+            <p class="text-xs text-muted-foreground">{{ req.date }}</p>
           </div>
           <span
             class="px-2.5 py-0.5 rounded-full text-xs font-medium border"

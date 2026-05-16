@@ -50,15 +50,15 @@ function handleSaveDraft(): void {
 <template>
   <AppPwaLayout>
     <template #title>
-      <span class="text-base font-semibold text-stitch-primary">Cuti Tahunan</span>
+      <span class="text-base font-semibold text-foreground">Cuti Tahunan</span>
     </template>
     <template #actions>
       <button
-        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-stitch-surface-container-high transition-colors"
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-muted/50 transition-colors"
         aria-label="Save draft"
         @click="handleSaveDraft"
       >
-        <Save class="w-5 h-5 text-stitch-primary" />
+        <Save class="w-5 h-5 text-foreground" />
       </button>
     </template>
 
@@ -78,30 +78,30 @@ function handleSaveDraft(): void {
     </section>
 
     <!-- ── Form ──────────────────────────────────────── -->
-    <section class="bg-white border border-stitch-outline-variant rounded-xl p-4 space-y-4 mb-4 shadow-sm">
+    <section class="bg-card border border-border rounded-xl p-4 space-y-4 mb-4 shadow-sm">
 
       <!-- Date Range -->
       <div class="space-y-1">
-        <label class="text-xs font-medium text-stitch-on-surface-variant block">Periode Cuti</label>
+        <label class="text-xs font-medium text-muted-foreground block">Periode Cuti</label>
         <div class="grid grid-cols-2 gap-2">
           <div class="relative">
             <input
               v-model="startDate"
-              class="w-full h-12 px-3 pt-2 border border-stitch-outline rounded-xl text-sm focus:ring-2 focus:ring-stitch-primary-fixed-dim focus:border-stitch-primary outline-none transition-all bg-transparent"
+              class="w-full h-12 px-3 pt-2 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all bg-transparent"
               type="text"
             />
-            <Calendar class="absolute right-3 top-3 w-4 h-4 text-stitch-outline pointer-events-none" />
+            <Calendar class="absolute right-3 top-3 w-4 h-4 text-border pointer-events-none" />
           </div>
           <div class="relative">
             <input
               v-model="endDate"
-              class="w-full h-12 px-3 pt-2 border border-stitch-outline rounded-xl text-sm focus:ring-2 focus:ring-stitch-primary-fixed-dim focus:border-stitch-primary outline-none transition-all bg-transparent"
+              class="w-full h-12 px-3 pt-2 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all bg-transparent"
               type="text"
             />
-            <Calendar class="absolute right-3 top-3 w-4 h-4 text-stitch-outline pointer-events-none" />
+            <Calendar class="absolute right-3 top-3 w-4 h-4 text-border pointer-events-none" />
           </div>
         </div>
-        <p class="text-xs text-stitch-on-surface-variant flex items-center gap-1">
+        <p class="text-xs text-muted-foreground flex items-center gap-1">
           <Info class="w-3 h-3" />
           Maks. 7 hari sekaligus
         </p>
@@ -109,33 +109,33 @@ function handleSaveDraft(): void {
 
       <!-- Day Stepper -->
       <div class="space-y-1">
-        <label class="text-xs font-medium text-stitch-on-surface-variant block">Jumlah Hari</label>
+        <label class="text-xs font-medium text-muted-foreground block">Jumlah Hari</label>
         <div class="flex items-center gap-4">
-          <div class="flex items-center border border-stitch-outline rounded-xl">
+          <div class="flex items-center border border-border rounded-xl">
             <button
-              class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-stitch-surface-container transition-colors text-stitch-primary"
+              class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-muted transition-colors text-foreground"
               @click="decrementDays"
             >
               <Minus class="w-4 h-4" />
             </button>
-            <span class="w-12 text-center font-semibold text-stitch-on-surface">{{ days }}</span>
+            <span class="w-12 text-center font-semibold text-foreground">{{ days }}</span>
             <button
-              class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-stitch-surface-container transition-colors text-stitch-primary"
+              class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-muted transition-colors text-foreground"
               @click="incrementDays"
             >
               <Plus class="w-4 h-4" />
             </button>
           </div>
           <div>
-            <p class="text-xs font-medium text-stitch-on-surface">Hari Kerja</p>
-            <p class="text-xs italic text-stitch-on-surface-variant">Sisa yang akan digunakan: {{ remainingDays }} hari</p>
+            <p class="text-xs font-medium text-foreground">Hari Kerja</p>
+            <p class="text-xs italic text-muted-foreground">Sisa yang akan digunakan: {{ remainingDays }} hari</p>
           </div>
         </div>
       </div>
 
       <!-- Leave Type Pills -->
       <div class="space-y-1">
-        <label class="text-xs font-medium text-stitch-on-surface-variant block">Jenis Cuti</label>
+        <label class="text-xs font-medium text-muted-foreground block">Jenis Cuti</label>
         <div class="flex flex-wrap gap-2">
           <button
             v-for="t in leaveTypes"
@@ -143,8 +143,8 @@ function handleSaveDraft(): void {
             class="px-4 h-10 rounded-full text-xs font-medium border transition-all"
             :class="
               leaveType === t
-                ? 'bg-stitch-primary text-stitch-on-primary border-stitch-primary'
-                : 'border-stitch-outline text-stitch-on-surface-variant hover:bg-stitch-surface-container'
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'border-border text-muted-foreground hover:bg-muted'
             "
             @click="leaveType = t"
           >
@@ -156,12 +156,12 @@ function handleSaveDraft(): void {
       <!-- Reason Textarea -->
       <div class="space-y-1">
         <div class="flex justify-between items-center">
-          <label class="text-xs font-medium text-stitch-on-surface-variant">Keterangan / Alasan</label>
-          <span class="text-[10px] text-stitch-outline">{{ reason.length }}/200</span>
+          <label class="text-xs font-medium text-muted-foreground">Keterangan / Alasan</label>
+          <span class="text-[10px] text-border">{{ reason.length }}/200</span>
         </div>
         <textarea
           v-model="reason"
-          class="w-full p-3 border border-stitch-outline rounded-xl text-sm focus:ring-2 focus:ring-stitch-primary-fixed-dim focus:border-stitch-primary outline-none transition-all resize-none"
+          class="w-full p-3 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none"
           placeholder="Jelaskan alasan pengambilan cuti..."
           rows="4"
         />
@@ -169,33 +169,33 @@ function handleSaveDraft(): void {
 
       <!-- Attachment -->
       <div class="space-y-1">
-        <label class="text-xs font-medium text-stitch-on-surface-variant block">Lampiran (opsional)</label>
-        <button class="flex items-center justify-center gap-2 border border-stitch-primary text-stitch-primary px-4 py-2 rounded-full text-xs font-medium hover:bg-stitch-primary-fixed transition-colors">
+        <label class="text-xs font-medium text-muted-foreground block">Lampiran (opsional)</label>
+        <button class="flex items-center justify-center gap-2 border border-primary text-foreground px-4 py-2 rounded-full text-xs font-medium hover:bg-primary-fixed transition-colors">
           <Paperclip class="w-4 h-4" />
           Tambahkan file
         </button>
-        <p class="text-[10px] text-stitch-on-surface-variant">PDF, JPG, PNG (maks. 5MB)</p>
+        <p class="text-[10px] text-muted-foreground">PDF, JPG, PNG (maks. 5MB)</p>
       </div>
     </section>
 
     <!-- ── Coverage Info ──────────────────────────────── -->
-    <div class="bg-stitch-surface-container border border-stitch-outline-variant rounded-xl p-3 flex items-start gap-2 mb-4">
-      <Info class="w-4 h-4 text-stitch-primary flex-shrink-0 mt-0.5" />
-      <p class="text-xs text-stitch-on-surface-variant">
-        Cuti Anda akan mencakup <span class="font-semibold text-stitch-on-surface">{{ days }}</span> hari kerja (tidak termasuk Sabtu/Minggu).
+    <div class="bg-muted border border-border rounded-xl p-3 flex items-start gap-2 mb-4">
+      <Info class="w-4 h-4 text-foreground flex-shrink-0 mt-0.5" />
+      <p class="text-xs text-muted-foreground">
+        Cuti Anda akan mencakup <span class="font-semibold text-foreground">{{ days }}</span> hari kerja (tidak termasuk Sabtu/Minggu).
       </p>
     </div>
 
     <!-- ── Actions ──────────────────────────────────── -->
     <div class="flex flex-col gap-3">
       <button
-        class="w-full h-14 bg-stitch-primary text-white rounded-full font-bold text-sm shadow-md hover:bg-stitch-primary-container transition-all active:scale-95"
+        class="w-full h-14 bg-primary text-white rounded-full font-bold text-sm shadow-md hover:bg-primary-container transition-all active:scale-95"
         @click="handleSubmit"
       >
         Kirim Pengajuan
       </button>
       <button
-        class="w-full h-12 border border-stitch-outline text-stitch-on-surface-variant rounded-full text-xs font-medium hover:bg-stitch-surface-container transition-all"
+        class="w-full h-12 border border-border text-muted-foreground rounded-full text-xs font-medium hover:bg-muted transition-all"
         @click="handleSaveDraft"
       >
         Simpan Draft
